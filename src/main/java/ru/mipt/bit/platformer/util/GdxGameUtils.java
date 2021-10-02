@@ -12,10 +12,10 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import ru.mipt.bit.platformer.entities.Direction;
+import ru.mipt.bit.platformer.entities.GraphicObject;
 
 import java.util.NoSuchElementException;
-
-import static com.badlogic.gdx.math.MathUtils.clamp;
 
 public final class GdxGameUtils {
 
@@ -47,33 +47,29 @@ public final class GdxGameUtils {
         }
     }
 
-    public static Rectangle moveRectangleAtTileCenter(TiledMapTileLayer tileLayer, Rectangle rectangle, GridPoint2 tileCoordinates) {
+    public static Vector2 moveRectangleAtTileCenter(TiledMapTileLayer tileLayer, Rectangle rectangle, GridPoint2 tileCoordinates) {
         Vector2 tileCenter = calculateTileCenter(tileLayer, tileCoordinates);
-        return rectangle.setCenter(tileCenter);
+        rectangle.setCenter(tileCenter);
+        return new Vector2(rectangle.x, rectangle.y);
     }
 
-    public static GridPoint2 incrementedY(GridPoint2 point) {
-        return new GridPoint2(point).add(0, 1);
+    public static GridPoint2 sumPoints(GridPoint2 first, GridPoint2 second) {
+        return new GridPoint2(first).add(second);
     }
 
-    public static GridPoint2 decrementedX(GridPoint2 point) {
-        return new GridPoint2(point).sub(1, 0);
-    }
-
-    public static GridPoint2 decrementedY(GridPoint2 point) {
-        return new GridPoint2(point).sub(0, 1);
-    }
-
-    public static GridPoint2 incrementedX(GridPoint2 point) {
-        return new GridPoint2(point).add(1, 0);
-    }
-
-    public static void drawTextureRegionUnscaled(Batch batch, TextureRegion region, Rectangle rectangle, float rotation) {
-        int regionWidth = region.getRegionWidth();
-        int regionHeight = region.getRegionHeight();
-        float regionOriginX = regionWidth / 2f;
-        float regionOriginY = regionHeight / 2f;
-        batch.draw(region, rectangle.x, rectangle.y, regionOriginX, regionOriginY, regionWidth, regionHeight, 1f, 1f, rotation);
+    public static void drawGraphicObjectsUnscaled(Batch batch, GraphicObject... graphicObjects) {
+        for (GraphicObject graphicObject : graphicObjects) {
+            TextureRegion region = graphicObject.getGraphics();
+            Rectangle rectangle = graphicObject.getRectangle();
+            int regionWidth = region.getRegionWidth();
+            int regionHeight = region.getRegionHeight();
+            float regionOriginX = regionWidth / 2f;
+            float regionOriginY = regionHeight / 2f;
+            batch.draw(
+                    region, rectangle.x, rectangle.y, regionOriginX, regionOriginY,
+                    regionWidth, regionHeight, 1f, 1f, graphicObject.getRotation()
+            );
+        }
     }
 
     public static Rectangle createBoundingRectangle(TextureRegion region) {
@@ -82,8 +78,8 @@ public final class GdxGameUtils {
                 .setHeight(region.getRegionHeight());
     }
 
-    public static float continueProgress(float previousProgress, float deltaTime, float speed) {
-        return clamp(previousProgress + deltaTime / speed, 0f, 1f);
+    public static boolean collisionImpossible(GraphicObject first, GraphicObject second, Direction direction) {
+        return !first.getCoordinates().equals(sumPoints(second.getCoordinates(), direction.getShift()));
     }
 
     private static Vector2 calculateTileCenter(TiledMapTileLayer tileLayer, GridPoint2 tileCoordinates) {
