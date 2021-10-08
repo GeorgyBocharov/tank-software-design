@@ -23,7 +23,9 @@ public class Tank extends AbstractLibGdxMovableObject {
         interpolateMovement();
         movementProgress = clamp(movementProgress + deltaTime / speed, PROGRESS_MIN, PROGRESS_MAX);
         if (isMovementFinished()) {
-            graphicObject.getLogicObject().setCoordinates(destinationCoordinates);
+            graphicObject
+                    .getLogicObject()
+                    .setCoordinates(new GridPoint2(destinationCoordinates));
         }
     }
 }

@@ -28,7 +28,7 @@ public abstract class AbstractLibGdxMovableObject implements Movable {
         this.movementService = movementService;
         LogicObject logicObject = new LogicObject(rotation, startCoordinates);
         graphicObject = new LibGdxGraphicObject(tileLayer, texture, logicObject);
-        destinationCoordinates = startCoordinates;
+        destinationCoordinates = new GridPoint2(startCoordinates);
     }
 
     @Override
