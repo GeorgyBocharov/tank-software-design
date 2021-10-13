@@ -11,52 +11,66 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
-import ru.mipt.bit.platformer.entities.AgileGraphicObject;
-import ru.mipt.bit.platformer.entities.Direction;
-import ru.mipt.bit.platformer.entities.GraphicObject;
+
+import ru.mipt.bit.platformer.controllers.PlayerController;
+import ru.mipt.bit.platformer.controllers.PlayerControllerImpl;
+import ru.mipt.bit.platformer.entities.LibGdxGraphicObject;
+import ru.mipt.bit.platformer.graphic.LevelRender;
+import ru.mipt.bit.platformer.graphic.LibGdxGraphicObjectRender;
+import ru.mipt.bit.platformer.graphic.LibGdxLevelRender;
+import ru.mipt.bit.platformer.keyboard.KeyboardChecker;
+import ru.mipt.bit.platformer.keyboard.LibGdxKeyboardChecker;
+import ru.mipt.bit.platformer.movables.Tank;
+import ru.mipt.bit.platformer.movement.LibGdxMovementService;
+import ru.mipt.bit.platformer.movement.LibGdxMovementServiceImpl;
 import ru.mipt.bit.platformer.service.ActionMapper;
+import ru.mipt.bit.platformer.service.CollisionDetectionManager;
 import ru.mipt.bit.platformer.service.impl.ActionMapperImpl;
-import ru.mipt.bit.platformer.util.TileMovement;
+import ru.mipt.bit.platformer.service.impl.CollisionDetectionManagerImpl;
+
+import java.util.List;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
-import static ru.mipt.bit.platformer.util.GdxGameUtils.*;
+
+import static ru.mipt.bit.platformer.util.GdxGameUtils.DEFAULT_KEY_MAPPING;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.createSingleLayerMapRenderer;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.getSingleLayer;
 
 public class GameDesktopLauncher implements ApplicationListener {
 
     private static final float MOVEMENT_SPEED = 0.4f;
 
-    private Batch batch;
-
-    private TiledMap level;
-    private MapRenderer levelRenderer;
-    private TileMovement tileMovement;
-
-    private Texture blueTankTexture;
-    private Texture greenTreeTexture;
-
-    private AgileGraphicObject player;
-    private GraphicObject tree;
-    private ActionMapper actionMapper;
+    private LevelRender levelRender;
+    private PlayerController playerController;
 
     @Override
     public void create() {
-        batch = new SpriteBatch();
-        actionMapper = new ActionMapperImpl();
+        Batch batch = new SpriteBatch();
+        TiledMap level = new TmxMapLoader().load("level.tmx");
+        MapRenderer levelRenderer = createSingleLayerMapRenderer(level, batch);
+        TiledMapTileLayer tileLayer = getSingleLayer(level);
 
-        // load level tiles
-        level = new TmxMapLoader().load("level.tmx");
-        levelRenderer = createSingleLayerMapRenderer(level, batch);
-        TiledMapTileLayer groundLayer = getSingleLayer(level);
-        tileMovement = new TileMovement(groundLayer, Interpolation.smooth);
+        levelRender = new LibGdxLevelRender(batch, levelRenderer);
+        LibGdxMovementService movementService = new LibGdxMovementServiceImpl(Interpolation.smooth);
 
-        // Texture decodes an image file and loads it into GPU memory, it represents a native resource
-        blueTankTexture = new Texture("images/tank_blue.png");
-        greenTreeTexture = new Texture("images/greenTree.png");
-        // TextureRegion represents Texture portion, there may be many TextureRegion instances of the same Texture
+        Texture blueTankTexture = new Texture("images/tank_blue.png");
+        Texture greenTreeTexture = new Texture("images/greenTree.png");
 
-        player = new AgileGraphicObject(blueTankTexture, new GridPoint2(1, 1), 0f);
-        tree = new GraphicObject(greenTreeTexture, new GridPoint2(1, 3));
-        moveRectangleAtTileCenter(groundLayer, tree.getRectangle(), tree.getCoordinates());
+        Tank tank = new Tank(MOVEMENT_SPEED, tileLayer, movementService, blueTankTexture, new GridPoint2(1, 1), 0f);
+        LibGdxGraphicObject tree = new LibGdxGraphicObject(tileLayer, greenTreeTexture, new GridPoint2(1, 3), 0f);
+
+
+        levelRender.addRenderer(new LibGdxGraphicObjectRender(tree, batch));
+        levelRender.addRenderer(new LibGdxGraphicObjectRender(tank.getGraphicObject(), batch));
+
+
+        ActionMapper actionMapper = new ActionMapperImpl(DEFAULT_KEY_MAPPING);
+        KeyboardChecker keyboardChecker = new LibGdxKeyboardChecker(Gdx.input);
+
+        CollisionDetectionManager collisionDetectionManager = new CollisionDetectionManagerImpl(List.of(tank, tree));
+
+        playerController = new PlayerControllerImpl(actionMapper, keyboardChecker, tank, collisionDetectionManager);
+
     }
 
     @Override
@@ -66,9 +80,9 @@ public class GameDesktopLauncher implements ApplicationListener {
         // get time passed since the last render
         float deltaTime = Gdx.graphics.getDeltaTime();
 
-        performGraphicObjectsInteractions(deltaTime);
+        playerController.movePlayer(deltaTime);
 
-        drawGraphicObjects();
+        levelRender.renderAll();
     }
 
     @Override
@@ -89,40 +103,7 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void dispose() {
         // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
-        greenTreeTexture.dispose();
-        blueTankTexture.dispose();
-        level.dispose();
-        batch.dispose();
-    }
-
-    private void drawGraphicObjects() {
-        // render each tile of the level
-        levelRenderer.render();
-
-        // start recording all drawing commands
-        batch.begin();
-
-        // render player
-        drawGraphicObjectsUnscaled(batch, player, tree);
-
-        // submit all drawing requests
-        batch.end();
-    }
-
-    private void performGraphicObjectsInteractions(float deltaTime) {
-        if (player.isMovementFinished()) {
-            for (Direction direction : Direction.values()) {
-                if (actionMapper.isDirectionKeyPressed(direction, Gdx.input)) {
-                    if (collisionImpossible(tree, player, direction)) {
-                        player.triggerMovement(direction);
-                    }
-                    player.setRotation(direction.getRotation());
-                }
-            }
-        }
-
-        tileMovement.interpolateAgileObjectCoordinates(player);
-        player.move(deltaTime, MOVEMENT_SPEED);
+        levelRender.dispose();
     }
 
     private void clearScreen() {

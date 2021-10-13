@@ -1,8 +1,8 @@
 package ru.mipt.bit.platformer.util;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.MapRenderer;
@@ -13,14 +13,25 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import ru.mipt.bit.platformer.entities.Direction;
-import ru.mipt.bit.platformer.entities.GraphicObject;
+import ru.mipt.bit.platformer.geometry.Point;
 
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 public final class GdxGameUtils {
 
     private GdxGameUtils() {
     }
+
+    public static final Map<Integer, Direction> DEFAULT_KEY_MAPPING = Map.of(
+            Input.Keys.W, Direction.UP,
+            Input.Keys.UP, Direction.UP,
+            Input.Keys.A, Direction.LEFT,
+            Input.Keys.LEFT, Direction.LEFT,
+            Input.Keys.S, Direction.DOWN,
+            Input.Keys.DOWN, Direction.DOWN,
+            Input.Keys.D, Direction.RIGHT,
+            Input.Keys.RIGHT, Direction.RIGHT);
 
     public static MapRenderer createSingleLayerMapRenderer(TiledMap tiledMap, Batch batch) {
         TiledMapTileLayer tileLayer = getSingleLayer(tiledMap);
@@ -33,7 +44,7 @@ public final class GdxGameUtils {
         return mapRenderer;
     }
 
-    public static <L extends MapLayer> L getSingleLayer(Map map) {
+    public static <L extends MapLayer> L getSingleLayer(com.badlogic.gdx.maps.Map map) {
         MapLayers layers = map.getLayers();
         switch (layers.size()) {
             case 0:
@@ -57,29 +68,14 @@ public final class GdxGameUtils {
         return new GridPoint2(first).add(second);
     }
 
-    public static void drawGraphicObjectsUnscaled(Batch batch, GraphicObject... graphicObjects) {
-        for (GraphicObject graphicObject : graphicObjects) {
-            TextureRegion region = graphicObject.getGraphics();
-            Rectangle rectangle = graphicObject.getRectangle();
-            int regionWidth = region.getRegionWidth();
-            int regionHeight = region.getRegionHeight();
-            float regionOriginX = regionWidth / 2f;
-            float regionOriginY = regionHeight / 2f;
-            batch.draw(
-                    region, rectangle.x, rectangle.y, regionOriginX, regionOriginY,
-                    regionWidth, regionHeight, 1f, 1f, graphicObject.getRotation()
-            );
-        }
-    }
-
     public static Rectangle createBoundingRectangle(TextureRegion region) {
         return new Rectangle()
                 .setWidth(region.getRegionWidth())
                 .setHeight(region.getRegionHeight());
     }
 
-    public static boolean collisionImpossible(GraphicObject first, GraphicObject second, Direction direction) {
-        return !first.getCoordinates().equals(sumPoints(second.getCoordinates(), direction.getShift()));
+    public static GridPoint2 convertPointToGridPoint(Point point) {
+        return new GridPoint2(point.getX(), point.getY());
     }
 
     private static Vector2 calculateTileCenter(TiledMapTileLayer tileLayer, GridPoint2 tileCoordinates) {
