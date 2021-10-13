@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import ru.mipt.bit.platformer.entities.Direction;
+import ru.mipt.bit.platformer.geometry.Point;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -71,6 +72,10 @@ public final class GdxGameUtils {
         return new Rectangle()
                 .setWidth(region.getRegionWidth())
                 .setHeight(region.getRegionHeight());
+    }
+
+    public static GridPoint2 convertPointToGridPoint(Point point) {
+        return new GridPoint2(point.getX(), point.getY());
     }
 
     private static Vector2 calculateTileCenter(TiledMapTileLayer tileLayer, GridPoint2 tileCoordinates) {

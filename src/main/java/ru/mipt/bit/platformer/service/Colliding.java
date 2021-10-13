@@ -1,7 +1,7 @@
 package ru.mipt.bit.platformer.service;
 
-import com.badlogic.gdx.math.GridPoint2;
+import ru.mipt.bit.platformer.geometry.Point;
 
 public interface Colliding {
-    boolean isCollisionPossible(GridPoint2 othersCoordinates);
+    boolean isCollisionPossible(Point othersCoordinates);
 }

@@ -11,10 +11,10 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
+
 import ru.mipt.bit.platformer.controllers.PlayerController;
 import ru.mipt.bit.platformer.controllers.PlayerControllerImpl;
 import ru.mipt.bit.platformer.entities.LibGdxGraphicObject;
-import ru.mipt.bit.platformer.entities.Player;
 import ru.mipt.bit.platformer.graphic.LevelRender;
 import ru.mipt.bit.platformer.graphic.LibGdxGraphicObjectRender;
 import ru.mipt.bit.platformer.graphic.LibGdxLevelRender;
@@ -24,11 +24,14 @@ import ru.mipt.bit.platformer.movables.Tank;
 import ru.mipt.bit.platformer.movement.LibGdxMovementService;
 import ru.mipt.bit.platformer.movement.LibGdxMovementServiceImpl;
 import ru.mipt.bit.platformer.service.ActionMapper;
+import ru.mipt.bit.platformer.service.CollisionDetectionManager;
 import ru.mipt.bit.platformer.service.impl.ActionMapperImpl;
+import ru.mipt.bit.platformer.service.impl.CollisionDetectionManagerImpl;
 
 import java.util.List;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
+
 import static ru.mipt.bit.platformer.util.GdxGameUtils.DEFAULT_KEY_MAPPING;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.createSingleLayerMapRenderer;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.getSingleLayer;
@@ -64,9 +67,9 @@ public class GameDesktopLauncher implements ApplicationListener {
         ActionMapper actionMapper = new ActionMapperImpl(DEFAULT_KEY_MAPPING);
         KeyboardChecker keyboardChecker = new LibGdxKeyboardChecker(Gdx.input);
 
-        Player player = new Player("George", tank);
+        CollisionDetectionManager collisionDetectionManager = new CollisionDetectionManagerImpl(List.of(tank, tree));
 
-        playerController = new PlayerControllerImpl(actionMapper, keyboardChecker, player, List.of(tree));
+        playerController = new PlayerControllerImpl(actionMapper, keyboardChecker, tank, collisionDetectionManager);
 
     }
 

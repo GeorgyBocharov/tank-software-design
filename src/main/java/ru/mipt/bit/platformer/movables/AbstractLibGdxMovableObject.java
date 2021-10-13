@@ -3,16 +3,22 @@ package ru.mipt.bit.platformer.movables;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
+
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+
 import ru.mipt.bit.platformer.entities.Direction;
 import ru.mipt.bit.platformer.entities.LibGdxGraphicObject;
 import ru.mipt.bit.platformer.entities.LogicObject;
+import ru.mipt.bit.platformer.geometry.Point;
 import ru.mipt.bit.platformer.movement.LibGdxMovementService;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
+import static ru.mipt.bit.platformer.util.GdxGameUtils.convertPointToGridPoint;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.sumPoints;
 
 @Getter
+@EqualsAndHashCode
 public abstract class AbstractLibGdxMovableObject implements Movable {
 
     protected static final float PROGRESS_MAX = 1F;
@@ -26,7 +32,7 @@ public abstract class AbstractLibGdxMovableObject implements Movable {
     public AbstractLibGdxMovableObject(TiledMapTileLayer tileLayer, LibGdxMovementService movementService, Texture texture,
                                        GridPoint2 startCoordinates, float rotation) {
         this.movementService = movementService;
-        LogicObject logicObject = new LogicObject(rotation, startCoordinates);
+        LogicObject logicObject = new LogicObject(rotation, new Point(startCoordinates.x, startCoordinates.y));
         graphicObject = new LibGdxGraphicObject(tileLayer, texture, logicObject);
         destinationCoordinates = new GridPoint2(startCoordinates);
     }
@@ -48,8 +54,10 @@ public abstract class AbstractLibGdxMovableObject implements Movable {
     }
 
     @Override
-    public GridPoint2 getCoordinatesAfterShift(Direction direction) {
-        return sumPoints(graphicObject.getLogicObject().getCoordinates(), direction.getShift());
+    public Point getCoordinatesAfterShift(Direction direction) {
+        Point coordinates = graphicObject.getLogicObject().getCoordinates();
+        GridPoint2 positionAfterShift = sumPoints(convertPointToGridPoint(coordinates), direction.getShift());
+        return new Point(positionAfterShift.x, positionAfterShift.y);
     }
 
     protected boolean isMovementFinished() {
@@ -61,4 +69,8 @@ public abstract class AbstractLibGdxMovableObject implements Movable {
                 .interpolateGameObjectCoordinates(graphicObject, movementProgress, destinationCoordinates);
     }
 
+    @Override
+    public boolean isCollisionPossible(Point othersCoordinates) {
+        return graphicObject.isCollisionPossible(othersCoordinates);
+    }
 }

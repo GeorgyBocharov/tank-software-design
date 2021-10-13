@@ -1,15 +1,13 @@
 package ru.mipt.bit.platformer.controllers;
 
 
-import com.badlogic.gdx.math.GridPoint2;
 import lombok.RequiredArgsConstructor;
-import ru.mipt.bit.platformer.service.Colliding;
-import ru.mipt.bit.platformer.entities.Direction;
-import ru.mipt.bit.platformer.entities.Player;
-import ru.mipt.bit.platformer.keyboard.KeyboardChecker;
-import ru.mipt.bit.platformer.service.ActionMapper;
 
-import java.util.List;
+import ru.mipt.bit.platformer.entities.Direction;
+import ru.mipt.bit.platformer.keyboard.KeyboardChecker;
+import ru.mipt.bit.platformer.movables.Movable;
+import ru.mipt.bit.platformer.service.ActionMapper;
+import ru.mipt.bit.platformer.service.CollisionDetectionManager;
 
 
 @RequiredArgsConstructor
@@ -17,32 +15,21 @@ public class PlayerControllerImpl implements PlayerController {
 
     private final ActionMapper actionMapper;
     private final KeyboardChecker checker;
-    private final Player player;
-    private final List<Colliding> obstacles;
-
+    private final Movable player;
+    private final CollisionDetectionManager collisionDetectionManager;
 
     @Override
     public void movePlayer(float deltaTime) {
         for (int key: actionMapper.getMappedKeys()) {
             if (checker.isKeyPressed(key)) {
                 Direction direction = actionMapper.getDirectionByKey(key);
-                player.getMovableObject().setRotation(direction.getRotation());
-                if (collisionImpossible(direction)) {
-                    player.getMovableObject().triggerMovement(direction);
+                player.setRotation(direction.getRotation());
+                if (!collisionDetectionManager.isCollisionPossible(player.getCoordinatesAfterShift(direction), player)) {
+                    player.triggerMovement(direction);
                 }
             }
         }
-        player.getMovableObject().move(deltaTime);
-    }
-
-    private boolean collisionImpossible(Direction direction) {
-        GridPoint2 expected = player.getMovableObject().getCoordinatesAfterShift(direction);
-        for (Colliding obstacle : obstacles) {
-            if (obstacle.isCollisionPossible(expected)) {
-                return false;
-            }
-        }
-        return true;
+        player.move(deltaTime);
     }
 
 }

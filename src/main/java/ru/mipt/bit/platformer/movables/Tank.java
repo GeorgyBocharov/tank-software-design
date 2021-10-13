@@ -3,10 +3,15 @@ package ru.mipt.bit.platformer.movables;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
+
+import lombok.EqualsAndHashCode;
+
+import ru.mipt.bit.platformer.geometry.Point;
 import ru.mipt.bit.platformer.movement.LibGdxMovementService;
 
 import static com.badlogic.gdx.math.MathUtils.clamp;
 
+@EqualsAndHashCode(callSuper = true)
 public class Tank extends AbstractLibGdxMovableObject {
 
     private final float speed;
@@ -25,7 +30,7 @@ public class Tank extends AbstractLibGdxMovableObject {
         if (isMovementFinished()) {
             graphicObject
                     .getLogicObject()
-                    .setCoordinates(new GridPoint2(destinationCoordinates));
+                    .setCoordinates(new Point(destinationCoordinates.x, destinationCoordinates.y));
         }
     }
 }

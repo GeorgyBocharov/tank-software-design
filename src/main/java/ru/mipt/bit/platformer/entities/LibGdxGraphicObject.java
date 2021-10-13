@@ -5,17 +5,23 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
+
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+
+import ru.mipt.bit.platformer.geometry.Point;
 import ru.mipt.bit.platformer.service.Colliding;
 import ru.mipt.bit.platformer.service.Disposable;
 
+import static ru.mipt.bit.platformer.util.GdxGameUtils.convertPointToGridPoint;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.createBoundingRectangle;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.moveRectangleAtTileCenter;
 
 
 @Getter
 @ToString
+@EqualsAndHashCode
 public class LibGdxGraphicObject implements Disposable, Colliding {
 
     private final Texture texture;
@@ -30,11 +36,11 @@ public class LibGdxGraphicObject implements Disposable, Colliding {
         this.rectangle = createBoundingRectangle(textureRegion);
         this.logicObject = logicObject;
         this.tileLayer = tileLayer;
-        moveRectangleAtTileCenter(tileLayer, rectangle, logicObject.getCoordinates());
+        moveRectangleAtTileCenter(tileLayer, rectangle, convertPointToGridPoint(logicObject.getCoordinates()));
     }
 
     public LibGdxGraphicObject(TiledMapTileLayer tileLayer, Texture texture, GridPoint2 coordinates, float rotation) {
-        this(tileLayer, texture, new LogicObject(rotation, coordinates));
+        this(tileLayer, texture, new LogicObject(rotation, new Point(coordinates.x, coordinates.y)));
     }
 
     @Override
@@ -43,7 +49,7 @@ public class LibGdxGraphicObject implements Disposable, Colliding {
     }
 
     @Override
-    public boolean isCollisionPossible(GridPoint2 othersCoordinates) {
-        return logicObject.getCoordinates().equals(othersCoordinates);
+    public boolean isCollisionPossible(Point othersCoordinates) {
+        return logicObject.isCollisionPossible(othersCoordinates);
     }
 }

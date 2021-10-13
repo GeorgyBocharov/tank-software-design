@@ -7,7 +7,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import lombok.AllArgsConstructor;
 import ru.mipt.bit.platformer.entities.LibGdxGraphicObject;
+import ru.mipt.bit.platformer.geometry.Point;
 
+import static ru.mipt.bit.platformer.util.GdxGameUtils.convertPointToGridPoint;
 import static ru.mipt.bit.platformer.util.GdxGameUtils.moveRectangleAtTileCenter;
 
 @AllArgsConstructor
@@ -22,7 +24,9 @@ public class LibGdxMovementServiceImpl implements LibGdxMovementService {
         Rectangle rectangle = graphicObject.getRectangle();
         TiledMapTileLayer tileLayer = graphicObject.getTileLayer();
 
-        Vector2 from = moveRectangleAtTileCenter(tileLayer, rectangle, graphicObject.getLogicObject().getCoordinates());
+
+        Point source = graphicObject.getLogicObject().getCoordinates();
+        Vector2 from = moveRectangleAtTileCenter(tileLayer, rectangle, convertPointToGridPoint(source));
         Vector2 to = moveRectangleAtTileCenter(tileLayer, rectangle, destination);
 
         float intermediateBottomLeftX = interpolation.apply(from.x, to.x, movementProgress);
