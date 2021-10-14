@@ -1,8 +1,8 @@
 package ru.mipt.bit.platformer.util;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.Map;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.MapRenderer;
@@ -12,15 +12,26 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import ru.mipt.bit.platformer.entities.Direction;
+import ru.mipt.bit.platformer.geometry.Point;
 
+import java.util.Map;
 import java.util.NoSuchElementException;
-
-import static com.badlogic.gdx.math.MathUtils.clamp;
 
 public final class GdxGameUtils {
 
     private GdxGameUtils() {
     }
+
+    public static final Map<Integer, Direction> DEFAULT_KEY_MAPPING = Map.of(
+            Input.Keys.W, Direction.UP,
+            Input.Keys.UP, Direction.UP,
+            Input.Keys.A, Direction.LEFT,
+            Input.Keys.LEFT, Direction.LEFT,
+            Input.Keys.S, Direction.DOWN,
+            Input.Keys.DOWN, Direction.DOWN,
+            Input.Keys.D, Direction.RIGHT,
+            Input.Keys.RIGHT, Direction.RIGHT);
 
     public static MapRenderer createSingleLayerMapRenderer(TiledMap tiledMap, Batch batch) {
         TiledMapTileLayer tileLayer = getSingleLayer(tiledMap);
@@ -33,7 +44,7 @@ public final class GdxGameUtils {
         return mapRenderer;
     }
 
-    public static <L extends MapLayer> L getSingleLayer(Map map) {
+    public static <L extends MapLayer> L getSingleLayer(com.badlogic.gdx.maps.Map map) {
         MapLayers layers = map.getLayers();
         switch (layers.size()) {
             case 0:
@@ -47,33 +58,14 @@ public final class GdxGameUtils {
         }
     }
 
-    public static Rectangle moveRectangleAtTileCenter(TiledMapTileLayer tileLayer, Rectangle rectangle, GridPoint2 tileCoordinates) {
+    public static Vector2 moveRectangleAtTileCenter(TiledMapTileLayer tileLayer, Rectangle rectangle, GridPoint2 tileCoordinates) {
         Vector2 tileCenter = calculateTileCenter(tileLayer, tileCoordinates);
-        return rectangle.setCenter(tileCenter);
+        rectangle.setCenter(tileCenter);
+        return new Vector2(rectangle.x, rectangle.y);
     }
 
-    public static GridPoint2 incrementedY(GridPoint2 point) {
-        return new GridPoint2(point).add(0, 1);
-    }
-
-    public static GridPoint2 decrementedX(GridPoint2 point) {
-        return new GridPoint2(point).sub(1, 0);
-    }
-
-    public static GridPoint2 decrementedY(GridPoint2 point) {
-        return new GridPoint2(point).sub(0, 1);
-    }
-
-    public static GridPoint2 incrementedX(GridPoint2 point) {
-        return new GridPoint2(point).add(1, 0);
-    }
-
-    public static void drawTextureRegionUnscaled(Batch batch, TextureRegion region, Rectangle rectangle, float rotation) {
-        int regionWidth = region.getRegionWidth();
-        int regionHeight = region.getRegionHeight();
-        float regionOriginX = regionWidth / 2f;
-        float regionOriginY = regionHeight / 2f;
-        batch.draw(region, rectangle.x, rectangle.y, regionOriginX, regionOriginY, regionWidth, regionHeight, 1f, 1f, rotation);
+    public static GridPoint2 sumPoints(GridPoint2 first, GridPoint2 second) {
+        return new GridPoint2(first).add(second);
     }
 
     public static Rectangle createBoundingRectangle(TextureRegion region) {
@@ -82,8 +74,8 @@ public final class GdxGameUtils {
                 .setHeight(region.getRegionHeight());
     }
 
-    public static float continueProgress(float previousProgress, float deltaTime, float speed) {
-        return clamp(previousProgress + deltaTime / speed, 0f, 1f);
+    public static GridPoint2 convertPointToGridPoint(Point point) {
+        return new GridPoint2(point.getX(), point.getY());
     }
 
     private static Vector2 calculateTileCenter(TiledMapTileLayer tileLayer, GridPoint2 tileCoordinates) {
