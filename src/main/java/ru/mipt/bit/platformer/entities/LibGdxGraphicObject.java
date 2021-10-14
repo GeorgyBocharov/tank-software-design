@@ -39,10 +39,6 @@ public class LibGdxGraphicObject implements Disposable, Colliding {
         moveRectangleAtTileCenter(tileLayer, rectangle, convertPointToGridPoint(logicObject.getCoordinates()));
     }
 
-    public LibGdxGraphicObject(TiledMapTileLayer tileLayer, Texture texture, GridPoint2 coordinates, float rotation) {
-        this(tileLayer, texture, new LogicObject(rotation, new Point(coordinates.x, coordinates.y)));
-    }
-
     @Override
     public void dispose() {
         texture.dispose();

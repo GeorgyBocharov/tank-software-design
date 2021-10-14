@@ -9,15 +9,19 @@ import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Interpolation;
 
 import ru.mipt.bit.platformer.controllers.PlayerController;
 import ru.mipt.bit.platformer.controllers.PlayerControllerImpl;
 import ru.mipt.bit.platformer.entities.LibGdxGraphicObject;
 import ru.mipt.bit.platformer.graphic.LevelRender;
+import ru.mipt.bit.platformer.graphic.LogicObjectsWrapper;
 import ru.mipt.bit.platformer.graphic.LibGdxGraphicObjectRender;
 import ru.mipt.bit.platformer.graphic.LibGdxLevelRender;
+import ru.mipt.bit.platformer.graphic.object.placement.GameFieldAndTextureParams;
+import ru.mipt.bit.platformer.graphic.object.placement.LogicObjectPositionsGenerator;
+import ru.mipt.bit.platformer.graphic.object.placement.impl.LibGdxGameFieldAndTextureParams;
+import ru.mipt.bit.platformer.graphic.object.placement.impl.LogicObjectPositionsFileGenerator;
 import ru.mipt.bit.platformer.keyboard.KeyboardChecker;
 import ru.mipt.bit.platformer.keyboard.LibGdxKeyboardChecker;
 import ru.mipt.bit.platformer.movables.Tank;
@@ -29,6 +33,7 @@ import ru.mipt.bit.platformer.service.impl.ActionMapperImpl;
 import ru.mipt.bit.platformer.service.impl.CollisionDetectionManagerImpl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 
@@ -52,24 +57,46 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         levelRender = new LibGdxLevelRender(batch, levelRenderer);
         LibGdxMovementService movementService = new LibGdxMovementServiceImpl(Interpolation.smooth);
+        CollisionDetectionManager collisionDetectionManager = new CollisionDetectionManagerImpl();
 
         Texture blueTankTexture = new Texture("images/tank_blue.png");
         Texture greenTreeTexture = new Texture("images/greenTree.png");
 
-        Tank tank = new Tank(MOVEMENT_SPEED, tileLayer, movementService, blueTankTexture, new GridPoint2(1, 1), 0f);
-        LibGdxGraphicObject tree = new LibGdxGraphicObject(tileLayer, greenTreeTexture, new GridPoint2(1, 3), 0f);
+        System.out.println("Texture height = " + greenTreeTexture.getHeight());
+        System.out.println("Texture width = " + greenTreeTexture.getWidth());
 
+        GameFieldAndTextureParams params = new LibGdxGameFieldAndTextureParams(tileLayer, greenTreeTexture);
 
-        levelRender.addRenderer(new LibGdxGraphicObjectRender(tree, batch));
-        levelRender.addRenderer(new LibGdxGraphicObjectRender(tank.getGraphicObject(), batch));
+        LogicObjectPositionsGenerator logicObjectPositionsGenerator = new LogicObjectPositionsFileGenerator(
+                "src/main/resources/location/graphic_objects_location.txt",
+                params
+        );
 
+        LogicObjectsWrapper wrapper = logicObjectPositionsGenerator.generateGraphicObjects();
+
+        List<Tank> tanks = wrapper.getTanks().stream()
+                .map(logicObject -> new LibGdxGraphicObject(tileLayer, blueTankTexture, logicObject))
+                .map(graphicObject -> {
+                    levelRender.addRenderer(new LibGdxGraphicObjectRender(graphicObject, batch));
+                    collisionDetectionManager.addColliding(graphicObject);
+                    return new Tank(MOVEMENT_SPEED, movementService, graphicObject);
+                })
+                .collect(Collectors.toList());
+
+        wrapper.getTrees().stream()
+                .map(logicObject -> new LibGdxGraphicObject(tileLayer, greenTreeTexture, logicObject))
+                .forEach(tree -> {
+                    levelRender.addRenderer(new LibGdxGraphicObjectRender(tree, batch));
+                    collisionDetectionManager.addColliding(tree);
+                });
 
         ActionMapper actionMapper = new ActionMapperImpl(DEFAULT_KEY_MAPPING);
         KeyboardChecker keyboardChecker = new LibGdxKeyboardChecker(Gdx.input);
 
-        CollisionDetectionManager collisionDetectionManager = new CollisionDetectionManagerImpl(List.of(tank, tree));
-
-        playerController = new PlayerControllerImpl(actionMapper, keyboardChecker, tank, collisionDetectionManager);
+        if (tanks.size() == 0) {
+            throw new RuntimeException("Number of tanks is zero");
+        }
+        playerController = new PlayerControllerImpl(actionMapper, keyboardChecker, tanks.get(0), collisionDetectionManager);
 
     }
 

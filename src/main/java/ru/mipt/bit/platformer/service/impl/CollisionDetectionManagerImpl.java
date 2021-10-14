@@ -1,15 +1,20 @@
 package ru.mipt.bit.platformer.service.impl;
 
-import lombok.RequiredArgsConstructor;
 import ru.mipt.bit.platformer.geometry.Point;
 import ru.mipt.bit.platformer.service.Colliding;
+import ru.mipt.bit.platformer.service.CollisionDetectionManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@RequiredArgsConstructor
-public class CollisionDetectionManagerImpl implements ru.mipt.bit.platformer.service.CollisionDetectionManager {
+public class CollisionDetectionManagerImpl implements CollisionDetectionManager {
 
-    private final List<Colliding> collidingObjects;
+    private final List<Colliding> collidingObjects = new ArrayList<>();
+
+    @Override
+    public void addColliding(Colliding colliding) {
+        collidingObjects.add(colliding);
+    }
 
     @Override
     public boolean isCollisionPossible(Point position, Colliding objectToCheck) {
