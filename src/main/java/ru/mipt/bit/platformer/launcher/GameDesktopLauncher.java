@@ -49,15 +49,17 @@ public class GameDesktopLauncher implements ApplicationListener {
     private static final float MOVEMENT_SPEED = 0.4f;
     public static final int PLAYER_INDEX = 0;
     public static final int BOTS_START_INDEX = 1;
+    public static final String GREEN_TREE_PNG = "images/greenTree.png";
+    public static final String TANK_BLUE_PNG = "images/tank_blue.png";
 
     private final Interpolation interpolation = Interpolation.smooth;
-    private final Texture blueTankTexture = new Texture("images/tank_blue.png");
-    private final Texture greenTreeTexture = new Texture("images/greenTree.png");
 
     private LevelRender levelRender;
     private TankController tankController;
     private TankController botController;
     private CommandExecutor commandExecutor;
+    private Texture blueTankTexture;
+    private Texture greenTreeTexture;
 
     @Override
     public void create() {
@@ -65,6 +67,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         TiledMap level = new TmxMapLoader().load("level.tmx");
         MapRenderer levelRenderer = createSingleLayerMapRenderer(level, batch);
         TiledMapTileLayer tileLayer = getSingleLayer(level);
+        loadTextures();
 
         levelRender = new LibGdxLevelRender(batch, levelRenderer);
         CollisionDetectionManager collisionDetectionManager = new CollisionDetectionManagerImpl(
@@ -125,6 +128,11 @@ public class GameDesktopLauncher implements ApplicationListener {
         // clear the screen
         Gdx.gl.glClearColor(0f, 0f, 0.2f, 1f);
         Gdx.gl.glClear(GL_COLOR_BUFFER_BIT);
+    }
+
+    private void loadTextures() {
+        greenTreeTexture = new Texture(GREEN_TREE_PNG);
+        blueTankTexture = new Texture(TANK_BLUE_PNG);
     }
 
     private void createTrees(Batch batch, TiledMapTileLayer tileLayer, CollisionDetectionManager collisionDetectionManager, Texture greenTreeTexture, LogicObjectsWrapper wrapper) {
