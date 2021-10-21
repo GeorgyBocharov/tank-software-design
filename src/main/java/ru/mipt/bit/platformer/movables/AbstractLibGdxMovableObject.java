@@ -68,6 +68,6 @@ public abstract class AbstractLibGdxMovableObject implements Movable {
     @Override
     public boolean isCollisionPossible(Point othersCoordinates) {
         return graphicObject.isCollisionPossible(othersCoordinates) ||
-                othersCoordinates.isEqualToGridPoint2(destinationCoordinates);
+                othersCoordinates.isEqualToCoordinates(destinationCoordinates.x, destinationCoordinates.y);
     }
 }

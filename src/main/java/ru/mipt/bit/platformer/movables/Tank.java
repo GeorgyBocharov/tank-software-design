@@ -22,7 +22,8 @@ public class Tank extends AbstractLibGdxMovableObject {
     public void move(float deltaTime) {
         interpolateMovement();
         movementProgress = clamp(movementProgress + deltaTime / speed, PROGRESS_MIN, PROGRESS_MAX);
-        if (isMovementFinished() && !graphicObject.getLogicObject().getCoordinates().isEqualToGridPoint2(destinationCoordinates)) {
+        Point logicObjectCoordinates = graphicObject.getLogicObject().getCoordinates();
+        if (isMovementFinished() && !logicObjectCoordinates.isEqualToCoordinates(destinationCoordinates.x, destinationCoordinates.y)) {
             System.out.println("Moving tank");
             graphicObject
                     .getLogicObject()
