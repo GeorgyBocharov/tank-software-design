@@ -35,6 +35,7 @@ public abstract class AbstractLibGdxMovableObject implements Movable {
     @Override
     public void triggerMovement(Direction direction) {
         if (isMovementFinished()) {
+            System.out.println("Triggering movement");
             movementProgress = PROGRESS_MIN;
             destinationCoordinates.x += direction.getShift().x;
             destinationCoordinates.y += direction.getShift().y;
@@ -66,6 +67,7 @@ public abstract class AbstractLibGdxMovableObject implements Movable {
 
     @Override
     public boolean isCollisionPossible(Point othersCoordinates) {
-        return graphicObject.isCollisionPossible(othersCoordinates);
+        return graphicObject.isCollisionPossible(othersCoordinates) ||
+                othersCoordinates.isEqualToGridPoint2(destinationCoordinates);
     }
 }

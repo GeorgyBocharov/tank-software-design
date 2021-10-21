@@ -2,7 +2,6 @@ package ru.mipt.bit.platformer.graphic.object.placement.impl;
 
 
 import ru.mipt.bit.platformer.entities.LogicObject;
-import ru.mipt.bit.platformer.geometry.Point;
 import ru.mipt.bit.platformer.graphic.LogicObjectsWrapper;
 import ru.mipt.bit.platformer.graphic.object.placement.GameFieldAndTextureParams;
 import ru.mipt.bit.platformer.graphic.object.placement.LogicObjectPositionsGenerator;
@@ -36,30 +35,52 @@ public class LogicObjectPositionsFileGenerator implements LogicObjectPositionsGe
             throw new RuntimeException(e);
         }
 
-        int rowNumber = Integer.min(gameFieldAndTextureParams.getGameFieldHeight(), rows.size());
+        int textureHeight = gameFieldAndTextureParams.getTextureHeight();
+        int textureWidth = gameFieldAndTextureParams.getTextureWidth();
+
+        int rowNumber = Integer.min(gameFieldAndTextureParams.getGameFieldHeight() / textureHeight, rows.size()) + 1;
 
         List<LogicObject> trees = new ArrayList<>();
         List<LogicObject> tanks = new ArrayList<>();
 
 
-        for (int y = 0; y <= rowNumber; y++) {
-            String row = rows.get(rows.size() - 1 - y).trim();
-            int columnNumber = Integer.min(row.length(), gameFieldAndTextureParams.getGameFieldWidth());
-            for (int x = 0; x < columnNumber; x++) {
-                switch (row.charAt(x)) {
-                    case TREE_MARKER:
-                        trees.add(new LogicObject(x, y));
-                        break;
-                    case TANK_MARKER:
-                        tanks.add(new LogicObject(x, y));
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
+        fillLists(rows, textureHeight, textureWidth, rowNumber, trees, tanks);
 
         return new LogicObjectsWrapper(tanks, trees);
+    }
+
+    private void fillLists(List<String> rows, int textureHeight, int textureWidth,
+                           int rowNumber, List<LogicObject> trees, List<LogicObject> tanks) {
+
+        int maxTexturesInRow = gameFieldAndTextureParams.getGameFieldWidth() / textureWidth;
+        boolean[][] field = new boolean[maxTexturesInRow][rowNumber];
+        for (int y = 0; y < rowNumber; y++) {
+            String row = rows.get(rows.size() - 1 - y).trim();
+            int columnNumber = Integer.min(row.length(), maxTexturesInRow);
+            for (int x = 0; x < columnNumber; x++) {
+                char tileMarker = row.charAt(x);
+                if (field[x][y] || (tileMarker != TANK_MARKER && tileMarker != TREE_MARKER)) {
+                    continue;
+                }
+                List<LogicObject> targetList;
+                if (tileMarker == TREE_MARKER) {
+                    targetList = trees;
+                } else {
+                    targetList = tanks;
+                }
+                markOccupiedTiles(textureHeight, textureWidth, field, x, y);
+                targetList.add(new LogicObject(x, y));
+                x += textureWidth;
+            }
+        }
+    }
+
+    private void markOccupiedTiles(int textureHeight, int textureWidth, boolean[][] field, int x, int y) {
+        for (int i = x; i < x + textureWidth; i++) {
+            for (int j = y; j < y + textureHeight; j++) {
+                field[i][j] = true;
+            }
+        }
     }
 
 }

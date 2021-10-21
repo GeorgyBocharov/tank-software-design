@@ -1,9 +1,5 @@
 package ru.mipt.bit.platformer.movables;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.math.GridPoint2;
-
 import lombok.EqualsAndHashCode;
 
 import ru.mipt.bit.platformer.entities.LibGdxGraphicObject;
@@ -26,7 +22,8 @@ public class Tank extends AbstractLibGdxMovableObject {
     public void move(float deltaTime) {
         interpolateMovement();
         movementProgress = clamp(movementProgress + deltaTime / speed, PROGRESS_MIN, PROGRESS_MAX);
-        if (isMovementFinished()) {
+        if (isMovementFinished() && !graphicObject.getLogicObject().getCoordinates().isEqualToGridPoint2(destinationCoordinates)) {
+            System.out.println("Moving tank");
             graphicObject
                     .getLogicObject()
                     .setCoordinates(new Point(destinationCoordinates.x, destinationCoordinates.y));
