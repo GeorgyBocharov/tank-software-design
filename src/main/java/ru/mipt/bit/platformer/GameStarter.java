@@ -2,7 +2,6 @@ package ru.mipt.bit.platformer;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import ru.mipt.bit.platformer.launcher.GameDesktopLauncher;
 
 public class GameStarter {
     private static final int SCREEN_WIDTH = 1200;

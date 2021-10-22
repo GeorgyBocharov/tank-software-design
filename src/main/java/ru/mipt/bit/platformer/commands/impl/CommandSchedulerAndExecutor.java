@@ -9,17 +9,12 @@ import java.util.List;
 
 public class CommandSchedulerAndExecutor implements CommandExecutor, CommandScheduler {
 
-    private static final int COMMAND_STACK_SIZE = 20;
 
     private final List<Command> commandList = new ArrayList<>();
 
     @Override
-    public boolean scheduleCommand(Command command) {
-        if (commandList.size() < COMMAND_STACK_SIZE) {
-            commandList.add(command);
-            return true;
-        }
-        return false;
+    public void scheduleCommand(Command command) {
+        commandList.add(command);
     }
 
     @Override

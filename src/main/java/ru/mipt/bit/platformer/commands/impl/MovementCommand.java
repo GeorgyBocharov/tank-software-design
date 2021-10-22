@@ -2,9 +2,9 @@ package ru.mipt.bit.platformer.commands.impl;
 
 import lombok.RequiredArgsConstructor;
 import ru.mipt.bit.platformer.commands.Command;
-import ru.mipt.bit.platformer.entities.Direction;
-import ru.mipt.bit.platformer.movables.Movable;
-import ru.mipt.bit.platformer.service.CollisionDetectionManager;
+import ru.mipt.bit.platformer.geometry.Direction;
+import ru.mipt.bit.platformer.objects.movable.Movable;
+import ru.mipt.bit.platformer.collision.CollisionDetectionManager;
 
 @RequiredArgsConstructor
 public class MovementCommand implements Command {

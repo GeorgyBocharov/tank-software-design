@@ -6,10 +6,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import ru.mipt.bit.platformer.entities.LogicObject;
-import ru.mipt.bit.platformer.graphic.LogicObjectsWrapper;
-import ru.mipt.bit.platformer.graphic.object.placement.impl.LogicObjectPositionsFileGenerator;
-import ru.mipt.bit.platformer.graphic.object.placement.impl.LogicObjectPositionsRandomGenerator;
+import ru.mipt.bit.platformer.objects.LogicObject;
+import ru.mipt.bit.platformer.objects.placement.LogicObjectsWrapper;
+import ru.mipt.bit.platformer.objects.placement.GameFieldAndTextureParams;
+import ru.mipt.bit.platformer.objects.placement.LogicObjectPositionsGenerator;
+import ru.mipt.bit.platformer.objects.placement.impl.LogicObjectPositionsFileGenerator;
+import ru.mipt.bit.platformer.objects.placement.impl.LogicObjectPositionsRandomGenerator;
 import ru.mipt.bit.platformer.graphic.object.placement.wrapper.LogicObjectNumberWrapper;
 
 import java.util.Collections;
