@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Random;
 
 @RequiredArgsConstructor
-public class BotCommandsGenerator implements CommandsGenerator {
+public class BotRandomCommandsGenerator implements CommandsGenerator {
 
     private final List<? extends Movable> bots;
     private final CollisionDetectionManager collisionDetectionManager;

@@ -19,7 +19,7 @@ public class LibGdxGraphicObjectRender implements GraphicObjectRenderer {
     public void render() {
         TextureRegion textureRegion = graphicObject.getTextureRegion();
         Rectangle rectangle = graphicObject.getRectangle();
-        float rotation = graphicObject.getLogicObject().getRotation();
+        float rotation = graphicObject.getLogicObject().getOrientation().getValue();
 
         int regionWidth = textureRegion.getRegionWidth();
         int regionHeight = textureRegion.getRegionHeight();

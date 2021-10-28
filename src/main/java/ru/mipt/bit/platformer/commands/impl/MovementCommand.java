@@ -15,7 +15,7 @@ public class MovementCommand implements Command {
 
     @Override
     public void execute() {
-        movable.setRotation(direction.getRotation());
+        movable.setRotation(direction.getOrientation());
         if (!collisionDetectionManager.isCollisionPossible(movable.getCoordinatesAfterShift(direction), movable)) {
             movable.triggerMovement(direction);
         }

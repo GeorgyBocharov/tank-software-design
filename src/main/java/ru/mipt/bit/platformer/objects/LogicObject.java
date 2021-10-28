@@ -9,20 +9,20 @@ import ru.mipt.bit.platformer.collision.Colliding;
 @ToString
 @EqualsAndHashCode
 public class LogicObject implements Colliding {
-    private float rotation;
+    private Orientation orientation;
     private Point coordinates;
 
-    public LogicObject(float rotation, Point coordinates) {
-        this.rotation = rotation;
+    public LogicObject(Orientation orientation, Point coordinates) {
+        this.orientation = orientation;
         this.coordinates = coordinates;
     }
 
     public LogicObject(Point coordinates) {
-        this(0f, coordinates);
+        this(Orientation.RIGHT, coordinates);
     }
 
     public LogicObject(int x, int y) {
-        this(0f, new Point(x,y));
+        this(Orientation.RIGHT, new Point(x,y));
     }
 
     @Override
@@ -30,12 +30,12 @@ public class LogicObject implements Colliding {
         return coordinates.equals(othersCoordinates);
     }
 
-    public float getRotation() {
-        return rotation;
+    public Orientation getOrientation() {
+        return orientation;
     }
 
-    public void setRotation(float rotation) {
-        this.rotation = rotation;
+    public void setOrientation(Orientation orientation) {
+        this.orientation = orientation;
     }
 
     public Point getCoordinates() {

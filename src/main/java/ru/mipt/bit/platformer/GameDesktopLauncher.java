@@ -12,12 +12,28 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Interpolation;
 
+import org.awesome.ai.AI;
+import org.awesome.ai.strategy.NotRecommendingAI;
+import ru.mipt.bit.platformer.ai.adapter.BotAICommandsAdapter;
+import ru.mipt.bit.platformer.ai.adapter.impl.BotAICommandsAdapterImpl;
+import ru.mipt.bit.platformer.ai.entities.converter.GraphicObjectToObstacleConverter;
+import ru.mipt.bit.platformer.ai.entities.converter.OrientationConverter;
+import ru.mipt.bit.platformer.ai.entities.converter.RecommendationToCommandConverter;
+import ru.mipt.bit.platformer.ai.entities.converter.TankToBotConverter;
+import ru.mipt.bit.platformer.ai.entities.converter.TankToPlayerConverter;
+import ru.mipt.bit.platformer.ai.entities.converter.impl.GraphicObjectToObstacleConverterImpl;
+import ru.mipt.bit.platformer.ai.entities.converter.impl.OrientationConverterImpl;
+import ru.mipt.bit.platformer.ai.entities.converter.impl.RecommendationToCommandConverterImpl;
+import ru.mipt.bit.platformer.ai.entities.converter.impl.TankToBotConverterImpl;
+import ru.mipt.bit.platformer.ai.entities.converter.impl.TankToPlayerConverterImpl;
+import ru.mipt.bit.platformer.ai.entities.creator.GameStateCreator;
+import ru.mipt.bit.platformer.ai.entities.creator.impl.GameStateCreatorImpl;
 import ru.mipt.bit.platformer.collision.Colliding;
 import ru.mipt.bit.platformer.commands.Command;
 import ru.mipt.bit.platformer.commands.CommandExecutor;
+import ru.mipt.bit.platformer.commands.generators.impl.BotAICommandGenerator;
 import ru.mipt.bit.platformer.commands.impl.CommandSchedulerAndExecutor;
 import ru.mipt.bit.platformer.commands.impl.MovementCommand;
-import ru.mipt.bit.platformer.commands.generators.impl.BotCommandsGenerator;
 import ru.mipt.bit.platformer.commands.generators.CommandsGenerator;
 import ru.mipt.bit.platformer.commands.generators.impl.PlayerCommandsGenerator;
 import ru.mipt.bit.platformer.geometry.Direction;
@@ -105,7 +121,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         gameObjectsActivator = activatorImpl;
         levelRender = libGdxLevelRender;
 
-        initCommandExecutorAndControllers(collisionManagerImpl, tanks);
+        initCommandExecutorAndControllers(collisionManagerImpl, tanks, trees);
 
     }
 
@@ -172,16 +188,22 @@ public class GameDesktopLauncher implements ApplicationListener {
                 .collect(Collectors.toList());
     }
 
-    private void initCommandExecutorAndControllers(CollisionDetectionManager collisionDetectionManager, List<Tank> tanks) {
+    private void initCommandExecutorAndControllers(CollisionDetectionManager collisionDetectionManager,
+                                                   List<Tank> tanks,
+                                                   List<LibGdxGraphicObject> trees) {
+
         CommandSchedulerAndExecutor schedulerAndExecutor = new CommandSchedulerAndExecutor();
         commandExecutor = schedulerAndExecutor;
 
         Tank player = getPlayer(tanks);
+        List<Tank> bots = getBots(tanks);
         CommandMapper commandMapper = createCommandMapper(player, collisionDetectionManager);
         KeyboardChecker keyboardChecker = new LibGdxKeyboardChecker(Gdx.input);
 
+        BotAICommandsAdapter aiCommandsAdapter = getBotAICommandsAdapter(collisionDetectionManager, trees, player, bots);
+
         tankController = new PlayerCommandsGenerator(commandMapper, keyboardChecker, schedulerAndExecutor);
-        botController = new BotCommandsGenerator(getBots(tanks), collisionDetectionManager, schedulerAndExecutor);
+        botController = new BotAICommandGenerator(schedulerAndExecutor, aiCommandsAdapter);
     }
 
     private Tank getPlayer(List<Tank> tanks) {
@@ -196,6 +218,32 @@ public class GameDesktopLauncher implements ApplicationListener {
             return Collections.emptyList();
         }
         return tanks.subList(BOTS_START_INDEX, tanks.size());
+    }
+
+    private BotAICommandsAdapter getBotAICommandsAdapter(CollisionDetectionManager collisionDetectionManager, List<LibGdxGraphicObject> trees, Tank player, List<Tank> bots) {
+        AI ai = new NotRecommendingAI();
+        OrientationConverter orientationConverter = new OrientationConverterImpl();
+        TankToPlayerConverter tankToPlayerConverter = new TankToPlayerConverterImpl(orientationConverter);
+        TankToBotConverter tankToBotConverter = new TankToBotConverterImpl(orientationConverter);
+        GraphicObjectToObstacleConverter graphicObjectToObstacleConverter = new GraphicObjectToObstacleConverterImpl();
+        RecommendationToCommandConverter recommendationToCommandConverter = new RecommendationToCommandConverterImpl(
+                collisionDetectionManager
+        );
+
+        GameStateCreator gameStateCreator = new GameStateCreatorImpl(
+                tankToPlayerConverter,
+                tankToBotConverter,
+                graphicObjectToObstacleConverter
+        );
+
+        return new BotAICommandsAdapterImpl(
+                ai,
+                gameStateCreator,
+                recommendationToCommandConverter,
+                bots,
+                trees,
+                player
+        );
     }
 
     private void addObjectsToActivatedService(List<? extends Activated> activatedList, GameObjectsActivatorImpl activator) {

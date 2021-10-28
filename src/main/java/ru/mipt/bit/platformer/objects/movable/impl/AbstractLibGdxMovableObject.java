@@ -9,6 +9,7 @@ import ru.mipt.bit.platformer.geometry.Direction;
 import ru.mipt.bit.platformer.objects.LibGdxGraphicObject;
 import ru.mipt.bit.platformer.geometry.Point;
 import ru.mipt.bit.platformer.movement.service.LibGdxMovementService;
+import ru.mipt.bit.platformer.objects.Orientation;
 import ru.mipt.bit.platformer.objects.movable.Movable;
 
 import static com.badlogic.gdx.math.MathUtils.isEqual;
@@ -43,9 +44,9 @@ public abstract class AbstractLibGdxMovableObject implements Movable {
     }
 
     @Override
-    public void setRotation(float rotation) {
+    public void setRotation(Orientation orientation) {
         if (isMovementFinished()) {
-            graphicObject.getLogicObject().setRotation(rotation);
+            graphicObject.getLogicObject().setOrientation(orientation);
         }
     }
 
