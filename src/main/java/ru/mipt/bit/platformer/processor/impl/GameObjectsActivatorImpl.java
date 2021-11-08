@@ -1,17 +1,14 @@
 package ru.mipt.bit.platformer.processor.impl;
 
+import lombok.RequiredArgsConstructor;
 import ru.mipt.bit.platformer.objects.Activated;
 import ru.mipt.bit.platformer.processor.GameObjectsActivator;
 
-import java.util.ArrayList;
 import java.util.List;
 
+@RequiredArgsConstructor
 public class GameObjectsActivatorImpl implements GameObjectsActivator {
-    private final List<Activated> activatedList = new ArrayList<>();
-
-    public void addActivated(Activated activated) {
-        activatedList.add(activated);
-    }
+    private final List<Activated> activatedList;
 
     @Override
     public void activateAll(float deltaTime) {

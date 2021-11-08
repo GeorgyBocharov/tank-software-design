@@ -5,14 +5,14 @@ import lombok.Getter;
 
 import lombok.ToString;
 
-import ru.mipt.bit.platformer.objects.LogicObject;
+import ru.mipt.bit.platformer.objects.CollidingObject;
 
 import java.util.List;
 
 @AllArgsConstructor
 @Getter
 @ToString
-public class LogicObjectsWrapper {
-    private final List<LogicObject> tanks;
-    private final List<LogicObject> trees;
+public class TreesAndTanksPositionContainer {
+    private final List<CollidingObject> tanks;
+    private final List<CollidingObject> trees;
 }

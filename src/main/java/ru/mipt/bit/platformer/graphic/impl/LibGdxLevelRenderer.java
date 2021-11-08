@@ -7,21 +7,15 @@ import ru.mipt.bit.platformer.graphic.GraphicObjectRenderer;
 import ru.mipt.bit.platformer.graphic.LevelRender;
 import ru.mipt.bit.platformer.graphic.Disposable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 @RequiredArgsConstructor
-public class LibGdxLevelRender implements LevelRender {
+public class LibGdxLevelRenderer implements LevelRender {
 
     private final Batch batch;
     private final MapRenderer levelRenderer;
-
-    List<GraphicObjectRenderer> renderers = new ArrayList<>();
-
-    public void addRenderer(GraphicObjectRenderer graphicObjectRenderer) {
-        renderers.add(graphicObjectRenderer);
-    }
+    private final List<GraphicObjectRenderer> renderers;
 
     @Override
     public void renderAll() {

@@ -5,7 +5,7 @@ import ru.mipt.bit.platformer.commands.CommandScheduler;
 import ru.mipt.bit.platformer.commands.impl.MovementCommand;
 import ru.mipt.bit.platformer.commands.generators.CommandsGenerator;
 import ru.mipt.bit.platformer.geometry.Direction;
-import ru.mipt.bit.platformer.objects.movable.Movable;
+import ru.mipt.bit.platformer.objects.Movable;
 import ru.mipt.bit.platformer.collision.CollisionDetectionManager;
 
 import java.util.List;

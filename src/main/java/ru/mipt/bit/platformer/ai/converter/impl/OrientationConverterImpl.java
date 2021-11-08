@@ -1,7 +1,7 @@
-package ru.mipt.bit.platformer.ai.entities.converter.impl;
+package ru.mipt.bit.platformer.ai.converter.impl;
 
 import org.awesome.ai.state.movable.Orientation;
-import ru.mipt.bit.platformer.ai.entities.converter.OrientationConverter;
+import ru.mipt.bit.platformer.ai.converter.OrientationConverter;
 
 public class OrientationConverterImpl implements OrientationConverter {
 

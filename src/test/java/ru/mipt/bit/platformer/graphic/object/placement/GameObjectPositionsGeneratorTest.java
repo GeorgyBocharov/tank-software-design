@@ -6,12 +6,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import ru.mipt.bit.platformer.objects.LogicObject;
-import ru.mipt.bit.platformer.objects.placement.LogicObjectsWrapper;
+import ru.mipt.bit.platformer.objects.CollidingObject;
+import ru.mipt.bit.platformer.objects.placement.TreesAndTanksPositionContainer;
 import ru.mipt.bit.platformer.objects.placement.GameFieldAndTextureParams;
-import ru.mipt.bit.platformer.objects.placement.LogicObjectPositionsGenerator;
-import ru.mipt.bit.platformer.objects.placement.impl.LogicObjectPositionsFileGenerator;
-import ru.mipt.bit.platformer.objects.placement.impl.LogicObjectPositionsRandomGenerator;
+import ru.mipt.bit.platformer.objects.placement.GameObjectPositionsGenerator;
+import ru.mipt.bit.platformer.objects.placement.impl.GameObjectPositionsFileGenerator;
+import ru.mipt.bit.platformer.objects.placement.impl.GameObjectPositionsRandomGenerator;
 import ru.mipt.bit.platformer.graphic.object.placement.wrapper.LogicObjectNumberWrapper;
 
 import java.util.Collections;
@@ -22,7 +22,7 @@ import static utils.TestDataSource.GRAPHIC_OBJECT_LOCATIONS_EMPTY;
 import static utils.TestDataSource.GRAPHIC_OBJECT_LOCATIONS_FIRST;
 import static utils.TestDataSource.GRAPHIC_OBJECT_LOCATIONS_SECOND;
 
-public class LogicObjectPositionsGeneratorTest {
+public class GameObjectPositionsGeneratorTest {
 
     private static GameFieldAndTextureParams gameFieldAndTextureParams;
     private static int expectedMaxNumberOfObjectsOnField;
@@ -57,16 +57,16 @@ public class LogicObjectPositionsGeneratorTest {
     @MethodSource("provideLogicObjectsNumber")
     public void returnGraphicObjectsWrapperOnRandomGeneration(LogicObjectNumberWrapper wrapper) {
 
-        LogicObjectPositionsRandomGenerator generator = new LogicObjectPositionsRandomGenerator(
+        GameObjectPositionsRandomGenerator generator = new GameObjectPositionsRandomGenerator(
                 gameFieldAndTextureParams, wrapper.getTankNumber(), wrapper.getTreeNumber());
 
         Assertions.assertEquals(expectedMaxNumberOfObjectsOnField, generator.getMaxObjectsNumber());
 
-        LogicObjectsWrapper logicObjectsWrapper = generator.generateGraphicObjects();
-        System.out.println(logicObjectsWrapper);
+        TreesAndTanksPositionContainer treesAndTanksPositionContainer = generator.generateTreesAndTanksPositions();
+        System.out.println(treesAndTanksPositionContainer);
 
-        List<LogicObject> actualTanks = logicObjectsWrapper.getTanks();
-        List<LogicObject> actualTrees = logicObjectsWrapper.getTrees();
+        List<CollidingObject> actualTanks = treesAndTanksPositionContainer.getTanks();
+        List<CollidingObject> actualTrees = treesAndTanksPositionContainer.getTrees();
 
         Assertions.assertEquals(wrapper.getExpectedTankNumber(), actualTanks.size());
         Assertions.assertEquals(wrapper.getExpectedTreeNumber(), actualTrees.size());
@@ -76,14 +76,14 @@ public class LogicObjectPositionsGeneratorTest {
 
     @ParameterizedTest
     @MethodSource("providePositionTestData")
-    public void returnGraphicObjectsWrapperOnLocationFile(String fileName, List<LogicObject> expectedTanks, List<LogicObject> expectedTrees) {
+    public void returnGraphicObjectsWrapperOnLocationFile(String fileName, List<CollidingObject> expectedTanks, List<CollidingObject> expectedTrees) {
 
-        LogicObjectPositionsGenerator generator = new LogicObjectPositionsFileGenerator(fileName, gameFieldAndTextureParams);
-        LogicObjectsWrapper logicObjectsWrapper = generator.generateGraphicObjects();
-        System.out.println(logicObjectsWrapper);
+        GameObjectPositionsGenerator generator = new GameObjectPositionsFileGenerator(fileName, gameFieldAndTextureParams);
+        TreesAndTanksPositionContainer treesAndTanksPositionContainer = generator.generateTreesAndTanksPositions();
+        System.out.println(treesAndTanksPositionContainer);
 
-        List<LogicObject> actualTanks = logicObjectsWrapper.getTanks();
-        List<LogicObject> actualTrees = logicObjectsWrapper.getTrees();
+        List<CollidingObject> actualTanks = treesAndTanksPositionContainer.getTanks();
+        List<CollidingObject> actualTrees = treesAndTanksPositionContainer.getTrees();
 
         Assertions.assertEquals(expectedTanks, actualTanks);
         Assertions.assertEquals(expectedTrees, actualTrees);
@@ -107,17 +107,17 @@ public class LogicObjectPositionsGeneratorTest {
         return Stream.of(
                 Arguments.of(
                         GRAPHIC_OBJECT_LOCATIONS_FIRST,
-                        List.of(new LogicObject(5, 0), new LogicObject(1, 5)),
-                        List.of(new LogicObject(2, 1), new LogicObject(4, 1), new LogicObject(8, 1),
-                                new LogicObject(4, 4), new LogicObject(9, 4) , new LogicObject(2, 6),
-                                new LogicObject(4, 6), new LogicObject(8,6))
+                        List.of(new CollidingObject(5, 0), new CollidingObject(1, 5)),
+                        List.of(new CollidingObject(2, 1), new CollidingObject(4, 1), new CollidingObject(8, 1),
+                                new CollidingObject(4, 4), new CollidingObject(9, 4) , new CollidingObject(2, 6),
+                                new CollidingObject(4, 6), new CollidingObject(8,6))
                 ),
                 Arguments.of(
                         GRAPHIC_OBJECT_LOCATIONS_SECOND,
-                        List.of(new LogicObject(5, 5)),
-                        List.of(new LogicObject(4, 0), new LogicObject(8, 1),
-                                new LogicObject(4, 4), new LogicObject(9, 4) , new LogicObject(9, 5),
-                                new LogicObject(4, 8))
+                        List.of(new CollidingObject(5, 5)),
+                        List.of(new CollidingObject(4, 0), new CollidingObject(8, 1),
+                                new CollidingObject(4, 4), new CollidingObject(9, 4) , new CollidingObject(9, 5),
+                                new CollidingObject(4, 8))
                 ),
                 Arguments.of(
                         GRAPHIC_OBJECT_LOCATIONS_EMPTY,

@@ -1,14 +1,14 @@
-package ru.mipt.bit.platformer.ai.entities.converter.impl;
+package ru.mipt.bit.platformer.ai.converter.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.awesome.ai.Action;
 import org.awesome.ai.Recommendation;
-import ru.mipt.bit.platformer.ai.entities.converter.RecommendationToCommandConverter;
+import ru.mipt.bit.platformer.ai.converter.RecommendationToCommandConverter;
 import ru.mipt.bit.platformer.collision.CollisionDetectionManager;
 import ru.mipt.bit.platformer.commands.Command;
 import ru.mipt.bit.platformer.commands.impl.MovementCommand;
 import ru.mipt.bit.platformer.geometry.Direction;
-import ru.mipt.bit.platformer.objects.movable.impl.Tank;
+import ru.mipt.bit.platformer.objects.Tank;
 
 @RequiredArgsConstructor
 public class RecommendationToCommandConverterImpl implements RecommendationToCommandConverter {
@@ -36,7 +36,7 @@ public class RecommendationToCommandConverterImpl implements RecommendationToCom
                 return () -> System.out.printf(
                         "Bot %d with orientation %s is shooting\n",
                         bot.hashCode(),
-                        bot.getGraphicObject().getLogicObject().getOrientation()
+                        bot.getLibGdxGraphicObject().getCollidingObject().getOrientation()
                 );
             }
             default:

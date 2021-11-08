@@ -1,10 +1,10 @@
 package ru.mipt.bit.platformer.objects.placement.impl;
 
-import ru.mipt.bit.platformer.objects.LogicObject;
+import ru.mipt.bit.platformer.objects.CollidingObject;
 import ru.mipt.bit.platformer.geometry.Point;
-import ru.mipt.bit.platformer.objects.placement.LogicObjectsWrapper;
+import ru.mipt.bit.platformer.objects.placement.TreesAndTanksPositionContainer;
 import ru.mipt.bit.platformer.objects.placement.GameFieldAndTextureParams;
-import ru.mipt.bit.platformer.objects.placement.LogicObjectPositionsGenerator;
+import ru.mipt.bit.platformer.objects.placement.GameObjectPositionsGenerator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-public class LogicObjectPositionsRandomGenerator implements LogicObjectPositionsGenerator {
+public class GameObjectPositionsRandomGenerator implements GameObjectPositionsGenerator {
 
     private final GameFieldAndTextureParams gameFieldAndTextureParams;
     private final int tankNumber;
@@ -21,7 +21,7 @@ public class LogicObjectPositionsRandomGenerator implements LogicObjectPositions
     private final int maxObjectsNumber;
 
 
-    public LogicObjectPositionsRandomGenerator(GameFieldAndTextureParams gameFieldAndTextureParams, int tankNumber, int treeNumber) {
+    public GameObjectPositionsRandomGenerator(GameFieldAndTextureParams gameFieldAndTextureParams, int tankNumber, int treeNumber) {
         this.gameFieldAndTextureParams = gameFieldAndTextureParams;
         this.tankNumber = tankNumber;
         this.treeNumber = treeNumber;
@@ -30,13 +30,13 @@ public class LogicObjectPositionsRandomGenerator implements LogicObjectPositions
     }
 
     @Override
-    public LogicObjectsWrapper generateGraphicObjects() {
+    public TreesAndTanksPositionContainer generateTreesAndTanksPositions() {
         if (maxObjectsNumber == 0) {
             System.out.println("Can't place objects due to small size of tileLayer");
-            return new LogicObjectsWrapper(Collections.emptyList(), Collections.emptyList());
+            return new TreesAndTanksPositionContainer(Collections.emptyList(), Collections.emptyList());
         }
-        List<LogicObject> tanks = new ArrayList<>();
-        List<LogicObject> trees = new ArrayList<>();
+        List<CollidingObject> tanks = new ArrayList<>();
+        List<CollidingObject> trees = new ArrayList<>();
 
         if (treeNumber + tankNumber < maxObjectsNumber / 2) {
             System.out.println("Generating via random");
@@ -46,7 +46,7 @@ public class LogicObjectPositionsRandomGenerator implements LogicObjectPositions
             generateGraphicObjectsViaCollection(treeNumber, tankNumber, tanks, trees);
         }
 
-        return new LogicObjectsWrapper(tanks, trees);
+        return new TreesAndTanksPositionContainer(tanks, trees);
     }
 
     public int getMaxObjectsNumber() {
@@ -59,7 +59,7 @@ public class LogicObjectPositionsRandomGenerator implements LogicObjectPositions
     }
 
     private void generateGraphicObjectsViaRandom(int treeNumber, int tankNumber,
-                                                 List<LogicObject> tanks, List<LogicObject> trees) {
+                                                 List<CollidingObject> tanks, List<CollidingObject> trees) {
 
         int objectsInColumn = gameFieldAndTextureParams.getGameFieldHeight() / gameFieldAndTextureParams.getTextureHeight() - 1;
         int objectsInRaw = gameFieldAndTextureParams.getGameFieldWidth() / gameFieldAndTextureParams.getTextureWidth() - 1;
@@ -71,9 +71,9 @@ public class LogicObjectPositionsRandomGenerator implements LogicObjectPositions
             Point point = new Point(random.nextInt(objectsInRaw), random.nextInt(objectsInColumn));
             if (randomPoints.add(point)) {
                 if (ctr < tankNumber) {
-                    tanks.add(new LogicObject(point));
+                    tanks.add(new CollidingObject(point));
                 } else {
-                    trees.add(new LogicObject(point));
+                    trees.add(new CollidingObject(point));
                 }
                 ctr++;
             } else {
@@ -83,18 +83,18 @@ public class LogicObjectPositionsRandomGenerator implements LogicObjectPositions
     }
 
     private void generateGraphicObjectsViaCollection(int treeNumber, int tankNumber,
-                                                     List<LogicObject> tanks, List<LogicObject> trees) {
+                                                     List<CollidingObject> tanks, List<CollidingObject> trees) {
 
         List<Point> availablePositions = generateAvailablePositions();
         Collections.shuffle(availablePositions);
         int graphicObjectsNumber = 0;
         int actualTankNumber = Integer.min(tankNumber, availablePositions.size());
         for (; graphicObjectsNumber < actualTankNumber; graphicObjectsNumber++) {
-            tanks.add(new LogicObject(availablePositions.get(graphicObjectsNumber)));
+            tanks.add(new CollidingObject(availablePositions.get(graphicObjectsNumber)));
         }
         int actualTreeNumber = Integer.min(treeNumber, availablePositions.size() - graphicObjectsNumber);
         for (int i = 0; i < actualTreeNumber; i++) {
-            trees.add(new LogicObject(availablePositions.get(graphicObjectsNumber)));
+            trees.add(new CollidingObject(availablePositions.get(graphicObjectsNumber)));
             graphicObjectsNumber++;
         }
     }

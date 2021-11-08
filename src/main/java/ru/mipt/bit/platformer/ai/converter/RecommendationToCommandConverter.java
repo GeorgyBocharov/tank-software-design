@@ -1,4 +1,4 @@
-package ru.mipt.bit.platformer.ai.entities.converter;
+package ru.mipt.bit.platformer.ai.converter;
 
 import org.awesome.ai.Recommendation;
 import ru.mipt.bit.platformer.commands.Command;

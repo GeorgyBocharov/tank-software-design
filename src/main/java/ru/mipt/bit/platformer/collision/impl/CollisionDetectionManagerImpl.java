@@ -5,19 +5,14 @@ import ru.mipt.bit.platformer.geometry.Point;
 import ru.mipt.bit.platformer.collision.Colliding;
 import ru.mipt.bit.platformer.collision.CollisionDetectionManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
 public class CollisionDetectionManagerImpl implements CollisionDetectionManager {
 
-    private final List<Colliding> collidingObjects = new ArrayList<>();
+    private final List<Colliding> collidingObjects;
     private final int maxX;
     private final int maxY;
-
-    public void addColliding(Colliding colliding) {
-        collidingObjects.add(colliding);
-    }
 
     @Override
     public boolean isCollisionPossible(Point position, Colliding objectToCheck) {

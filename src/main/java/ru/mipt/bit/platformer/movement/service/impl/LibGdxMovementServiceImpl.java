@@ -26,7 +26,7 @@ public class LibGdxMovementServiceImpl implements LibGdxMovementService {
         TiledMapTileLayer tileLayer = graphicObject.getTileLayer();
 
 
-        Point source = graphicObject.getLogicObject().getCoordinates();
+        Point source = graphicObject.getCollidingObject().getCoordinates();
         Vector2 from = moveRectangleAtTileCenter(tileLayer, rectangle, convertPointToGridPoint(source));
         Vector2 to = moveRectangleAtTileCenter(tileLayer, rectangle, destination);
 

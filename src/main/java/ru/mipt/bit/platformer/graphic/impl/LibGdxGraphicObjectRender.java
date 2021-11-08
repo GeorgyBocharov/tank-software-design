@@ -3,23 +3,23 @@ package ru.mipt.bit.platformer.graphic.impl;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
-import lombok.AllArgsConstructor;
-import lombok.Setter;
+
+import lombok.RequiredArgsConstructor;
+
 import ru.mipt.bit.platformer.objects.LibGdxGraphicObject;
 import ru.mipt.bit.platformer.graphic.GraphicObjectRenderer;
 
-@AllArgsConstructor
-@Setter
+@RequiredArgsConstructor
 public class LibGdxGraphicObjectRender implements GraphicObjectRenderer {
 
-    private LibGdxGraphicObject graphicObject;
-    private Batch batch;
+    private final LibGdxGraphicObject graphicObject;
+    private final Batch batch;
 
     @Override
     public void render() {
         TextureRegion textureRegion = graphicObject.getTextureRegion();
         Rectangle rectangle = graphicObject.getRectangle();
-        float rotation = graphicObject.getLogicObject().getOrientation().getValue();
+        float rotation = graphicObject.getCollidingObject().getOrientation().getValue();
 
         int regionWidth = textureRegion.getRegionWidth();
         int regionHeight = textureRegion.getRegionHeight();
