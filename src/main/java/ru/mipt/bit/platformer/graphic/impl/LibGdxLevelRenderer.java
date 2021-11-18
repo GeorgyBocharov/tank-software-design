@@ -6,7 +6,9 @@ import lombok.RequiredArgsConstructor;
 import ru.mipt.bit.platformer.graphic.GraphicObjectRenderer;
 import ru.mipt.bit.platformer.graphic.LevelRender;
 import ru.mipt.bit.platformer.graphic.Disposable;
+import ru.mipt.bit.platformer.objects.Activated;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -21,7 +23,7 @@ public class LibGdxLevelRenderer implements LevelRender {
     public void renderAll() {
         levelRenderer.render();
         batch.begin();
-        renderers.forEach(GraphicObjectRenderer::render);
+        renderers.forEach(renderer -> renderer.render(batch));
         batch.end();
     }
 
@@ -29,5 +31,20 @@ public class LibGdxLevelRenderer implements LevelRender {
     public void dispose() {
         batch.dispose();
         renderers.forEach(Disposable::dispose);
+    }
+
+    @Override
+    public void updateWithNew(Activated newActivated) {
+
+    }
+
+    @Override
+    public void updateWithDeleted(Activated deletedActivated) {
+        for (GraphicObjectRenderer renderer: renderers) {
+            if (renderer.hasActivated(deletedActivated)) {
+                renderers.remove(renderer);
+                break;
+            }
+        }
     }
 }

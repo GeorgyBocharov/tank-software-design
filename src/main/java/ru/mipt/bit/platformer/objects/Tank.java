@@ -6,10 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import ru.mipt.bit.platformer.geometry.Direction;
 import ru.mipt.bit.platformer.geometry.Point;
-import ru.mipt.bit.platformer.movement.service.LibGdxMovementService;
 
-import static com.badlogic.gdx.math.MathUtils.clamp;
-import static com.badlogic.gdx.math.MathUtils.isEqual;
 import static ru.mipt.bit.platformer.utils.GdxGameUtils.convertPointToGridPoint;
 import static ru.mipt.bit.platformer.utils.GdxGameUtils.sumPoints;
 
@@ -17,33 +14,36 @@ import static ru.mipt.bit.platformer.utils.GdxGameUtils.sumPoints;
 @Getter
 public class Tank implements Movable {
 
-    protected static final float PROGRESS_MAX = 1F;
-    protected static final float PROGRESS_MIN = 0F;
+    private static final float PROGRESS_MAX = 1F;
+    private static final float PROGRESS_MIN = 0F;
+    private static final float FLOAT_ROUNDING_ERROR = 0.000001f;
 
     private float movementProgress = PROGRESS_MAX;
     private final float speed;
-    private final LibGdxMovementService movementService;
 
-    private LibGdxGraphicObject libGdxGraphicObject;
     private final CollidingObject collidingObject;
+    private final ProgressService progressService;
 
-    private final GridPoint2 destinationCoordinates;
+    private final Point destinationCoordinates;
 
-    public Tank(float speed, LibGdxMovementService movementService, LibGdxGraphicObject libGdxGraphicObject, CollidingObject collidingObject) {
+    public Tank(float speed, CollidingObject collidingObject, ProgressService progressService) {
         this.speed = speed;
-        this.movementService = movementService;
-        this.libGdxGraphicObject = libGdxGraphicObject;
         this.collidingObject = collidingObject;
-        destinationCoordinates = convertPointToGridPoint(collidingObject.getCoordinates());
+        this.destinationCoordinates = collidingObject.getCoordinates();
+        this.progressService = progressService;
+    }
+
+    public void shoot() {
+
     }
 
     @Override
     public void activate(float deltaTime) {
-        interpolateMovement();
-        movementProgress = clamp(movementProgress + deltaTime / speed, PROGRESS_MIN, PROGRESS_MAX);
+        movementProgress = progressService.calculateProgress(movementProgress + deltaTime / speed, PROGRESS_MIN, PROGRESS_MAX);
         Point logicObjectCoordinates = collidingObject.getCoordinates();
-        if (isMovementFinished() && !logicObjectCoordinates.isEqualToCoordinates(destinationCoordinates.x, destinationCoordinates.y)) {
-            collidingObject.setCoordinates(new Point(destinationCoordinates.x, destinationCoordinates.y));
+        if (isMovementFinished() &&
+                !logicObjectCoordinates.isEqualToCoordinates(destinationCoordinates.getX(), destinationCoordinates.getY())) {
+            collidingObject.setCoordinates(destinationCoordinates);
         }
     }
 
@@ -56,8 +56,7 @@ public class Tank implements Movable {
         collidingObject.setOrientation(direction.getOrientation());
         if (!isCollisionPossible) {
             movementProgress = PROGRESS_MIN;
-            destinationCoordinates.x += direction.getShift().x;
-            destinationCoordinates.y += direction.getShift().y;
+            destinationCoordinates.add(direction.getShift().x, direction.getShift().y);
         }
     }
 
@@ -71,15 +70,12 @@ public class Tank implements Movable {
     @Override
     public boolean isCollisionPossible(Point othersCoordinates) {
         return collidingObject.isCollisionPossible(othersCoordinates) ||
-                othersCoordinates.isEqualToCoordinates(destinationCoordinates.x, destinationCoordinates.y);
+                othersCoordinates.equals(destinationCoordinates);
     }
 
     private boolean isMovementFinished() {
-        return isEqual(movementProgress, PROGRESS_MAX);
+        return Math.abs(movementProgress - PROGRESS_MAX) < FLOAT_ROUNDING_ERROR;
     }
 
-    private void interpolateMovement() {
-        libGdxGraphicObject = movementService
-                .interpolateGameObjectCoordinates(libGdxGraphicObject, movementProgress, destinationCoordinates);
-    }
+
 }

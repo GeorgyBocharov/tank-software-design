@@ -1,5 +1,7 @@
 package ru.mipt.bit.platformer.processor;
 
-public interface GameObjectsActivator {
+import ru.mipt.bit.platformer.publisher.Publisher;
+
+public interface GameObjectsActivator extends Publisher {
     void activateAll(float deltaTime);
 }

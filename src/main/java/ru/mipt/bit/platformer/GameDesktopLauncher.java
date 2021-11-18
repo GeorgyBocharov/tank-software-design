@@ -39,7 +39,7 @@ import ru.mipt.bit.platformer.geometry.Direction;
 import ru.mipt.bit.platformer.graphic.GraphicObjectRenderer;
 import ru.mipt.bit.platformer.objects.Activated;
 import ru.mipt.bit.platformer.objects.CollidingObject;
-import ru.mipt.bit.platformer.objects.LibGdxGraphicObject;
+import ru.mipt.bit.platformer.graphic.impl.LibGdxGraphicObject;
 import ru.mipt.bit.platformer.graphic.LevelRender;
 import ru.mipt.bit.platformer.objects.Obstacle;
 import ru.mipt.bit.platformer.objects.placement.TreesAndTanksPositionContainer;

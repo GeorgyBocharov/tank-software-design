@@ -12,7 +12,7 @@ import ru.mipt.bit.platformer.collision.Colliding;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class CollidingObject implements Colliding {
+public class CollidingObject implements Colliding, Activated {
     private Orientation orientation;
     private Point coordinates;
 
@@ -27,6 +27,11 @@ public class CollidingObject implements Colliding {
 
     public CollidingObject(int x, int y) {
         this(Orientation.RIGHT, new Point(x,y));
+    }
+
+    @Override
+    public void activate(float deltaTime) {
+
     }
 
     @Override

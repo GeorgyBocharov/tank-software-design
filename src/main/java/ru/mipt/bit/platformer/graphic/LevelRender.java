@@ -1,5 +1,7 @@
 package ru.mipt.bit.platformer.graphic;
 
-public interface LevelRender extends Disposable {
+import ru.mipt.bit.platformer.publisher.Subscriber;
+
+public interface LevelRender extends Disposable, Subscriber {
     void renderAll();
 }

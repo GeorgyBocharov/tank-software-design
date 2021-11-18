@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import lombok.AllArgsConstructor;
 import ru.mipt.bit.platformer.movement.service.LibGdxMovementService;
-import ru.mipt.bit.platformer.objects.LibGdxGraphicObject;
+import ru.mipt.bit.platformer.graphic.impl.LibGdxGraphicObject;
 import ru.mipt.bit.platformer.geometry.Point;
 
 import static ru.mipt.bit.platformer.utils.GdxGameUtils.convertPointToGridPoint;
@@ -16,18 +16,15 @@ import static ru.mipt.bit.platformer.utils.GdxGameUtils.moveRectangleAtTileCente
 @AllArgsConstructor
 public class LibGdxMovementServiceImpl implements LibGdxMovementService {
     private final Interpolation interpolation;
+    private final TiledMapTileLayer tileLayer;
 
 
     @Override
-    public LibGdxGraphicObject interpolateGameObjectCoordinates(LibGdxGraphicObject graphicObject,
-                                                                float movementProgress, GridPoint2 destination) {
-
-        Rectangle rectangle = graphicObject.getRectangle();
-        TiledMapTileLayer tileLayer = graphicObject.getTileLayer();
+    public void interpolateGameObjectCoordinates(Rectangle rectangle, GridPoint2 source,
+                                                                GridPoint2 destination, float movementProgress) {
 
 
-        Point source = graphicObject.getCollidingObject().getCoordinates();
-        Vector2 from = moveRectangleAtTileCenter(tileLayer, rectangle, convertPointToGridPoint(source));
+        Vector2 from = moveRectangleAtTileCenter(tileLayer, rectangle, source);
         Vector2 to = moveRectangleAtTileCenter(tileLayer, rectangle, destination);
 
         float intermediateBottomLeftX = interpolation.apply(from.x, to.x, movementProgress);
@@ -37,7 +34,6 @@ public class LibGdxMovementServiceImpl implements LibGdxMovementService {
                 .setX(intermediateBottomLeftX)
                 .setY(intermediateBottomLeftY);
 
-        return graphicObject;
     }
 
 }
