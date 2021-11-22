@@ -4,40 +4,34 @@ import lombok.RequiredArgsConstructor;
 import org.awesome.ai.Action;
 import org.awesome.ai.Recommendation;
 import ru.mipt.bit.platformer.ai.converter.RecommendationToCommandConverter;
-import ru.mipt.bit.platformer.collision.CollisionDetectionManager;
 import ru.mipt.bit.platformer.commands.Command;
 import ru.mipt.bit.platformer.commands.impl.MovementCommand;
-import ru.mipt.bit.platformer.geometry.Direction;
-import ru.mipt.bit.platformer.objects.Tank;
+import ru.mipt.bit.platformer.commands.impl.ShootCommand;
+import ru.mipt.bit.platformer.placement.Direction;
+import ru.mipt.bit.platformer.objects.logic.LogicTank;
 
 @RequiredArgsConstructor
 public class RecommendationToCommandConverterImpl implements RecommendationToCommandConverter {
 
-    private final CollisionDetectionManager collisionDetectionManager;
-
     @Override
     public Command convertToCommand(Recommendation recommendation) {
-        Tank bot = (Tank) recommendation.getActor().getSource();
+        LogicTank bot = (LogicTank) recommendation.getActor().getSource();
         Action action = recommendation.getAction();
         switch (action) {
             case MoveNorth: {
-                return new MovementCommand(collisionDetectionManager, bot, Direction.UP);
+                return new MovementCommand(bot, Direction.UP);
             }
             case MoveSouth: {
-                return new MovementCommand(collisionDetectionManager, bot, Direction.DOWN);
+                return new MovementCommand(bot, Direction.DOWN);
             }
             case MoveWest: {
-                return new MovementCommand(collisionDetectionManager, bot, Direction.LEFT);
+                return new MovementCommand(bot, Direction.LEFT);
             }
             case MoveEast: {
-                return new MovementCommand(collisionDetectionManager, bot, Direction.RIGHT);
+                return new MovementCommand(bot, Direction.RIGHT);
             }
             case Shoot: {
-                return () -> System.out.printf(
-                        "Bot %d with orientation %s is shooting\n",
-                        bot.hashCode(),
-                        bot.getLibGdxGraphicObject().getCollidingObject().getOrientation()
-                );
+                return new ShootCommand(bot);
             }
             default:
                 throw new RuntimeException("Unexpected action " + action);
