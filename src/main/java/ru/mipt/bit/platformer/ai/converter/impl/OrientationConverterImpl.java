@@ -6,7 +6,7 @@ import ru.mipt.bit.platformer.ai.converter.OrientationConverter;
 public class OrientationConverterImpl implements OrientationConverter {
 
     @Override
-    public Orientation convertToOrientation(ru.mipt.bit.platformer.objects.Orientation logicObjectOrientation) {
+    public Orientation convertToOrientation(ru.mipt.bit.platformer.placement.Orientation logicObjectOrientation) {
         switch (logicObjectOrientation) {
             case UP:
                 return Orientation.N;

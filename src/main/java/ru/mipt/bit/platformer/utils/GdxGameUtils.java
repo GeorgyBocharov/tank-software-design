@@ -11,7 +11,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import ru.mipt.bit.platformer.geometry.Point;
+import ru.mipt.bit.platformer.placement.Point;
 
 import java.util.NoSuchElementException;
 

@@ -6,8 +6,8 @@ import ru.mipt.bit.platformer.ai.converter.TankToPlayerConverter;
 import ru.mipt.bit.platformer.ai.converter.ObstacleConverter;
 import ru.mipt.bit.platformer.ai.converter.TankToBotConverter;
 import ru.mipt.bit.platformer.ai.creator.GameStateCreator;
-import ru.mipt.bit.platformer.objects.CollidingObject;
-import ru.mipt.bit.platformer.objects.Tank;
+import ru.mipt.bit.platformer.objects.logic.LogicObstacle;
+import ru.mipt.bit.platformer.objects.logic.LogicTank;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,7 +20,7 @@ public class GameStateCreatorImpl implements GameStateCreator {
     private final ObstacleConverter gdxObstacleConverter;
 
     @Override
-    public GameState createGameState(Tank player, List<Tank> bots, List<CollidingObject> obstacles) {
+    public GameState createGameState(LogicTank player, List<LogicTank> bots, List<LogicObstacle> obstacles) {
         return GameState.builder()
                 .bots(
                         bots.stream()

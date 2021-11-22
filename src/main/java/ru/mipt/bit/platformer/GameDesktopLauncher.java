@@ -11,11 +11,8 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Interpolation;
-
 import org.awesome.ai.AI;
 import org.awesome.ai.strategy.NotRecommendingAI;
-import ru.mipt.bit.platformer.commands.CommandScheduler;
-import ru.mipt.bit.platformer.commands.generators.impl.BotAICommandsAdapter;
 import ru.mipt.bit.platformer.ai.converter.ObstacleConverter;
 import ru.mipt.bit.platformer.ai.converter.OrientationConverter;
 import ru.mipt.bit.platformer.ai.converter.RecommendationToCommandConverter;
@@ -28,67 +25,71 @@ import ru.mipt.bit.platformer.ai.converter.impl.TankToBotConverterImpl;
 import ru.mipt.bit.platformer.ai.converter.impl.TankToPlayerConverterImpl;
 import ru.mipt.bit.platformer.ai.creator.GameStateCreator;
 import ru.mipt.bit.platformer.ai.creator.impl.GameStateCreatorImpl;
-import ru.mipt.bit.platformer.collision.Colliding;
+import ru.mipt.bit.platformer.collision.CollisionDetector;
+import ru.mipt.bit.platformer.collision.impl.CollisionDetectorImpl;
 import ru.mipt.bit.platformer.commands.Command;
 import ru.mipt.bit.platformer.commands.CommandExecutor;
+import ru.mipt.bit.platformer.commands.CommandScheduler;
+import ru.mipt.bit.platformer.commands.generators.impl.RandomCommandsGenerator;
+import ru.mipt.bit.platformer.controllers.Controller;
+import ru.mipt.bit.platformer.controllers.impl.BotAICommandsAdapter;
+import ru.mipt.bit.platformer.controllers.impl.BotController;
+import ru.mipt.bit.platformer.controllers.impl.PlayerController;
 import ru.mipt.bit.platformer.commands.impl.CommandSchedulerAndExecutor;
 import ru.mipt.bit.platformer.commands.impl.MovementCommand;
-import ru.mipt.bit.platformer.commands.generators.CommandsGenerator;
-import ru.mipt.bit.platformer.commands.generators.impl.PlayerCommandsGenerator;
-import ru.mipt.bit.platformer.geometry.Direction;
-import ru.mipt.bit.platformer.graphic.GraphicObjectRenderer;
-import ru.mipt.bit.platformer.objects.Activated;
-import ru.mipt.bit.platformer.objects.CollidingObject;
-import ru.mipt.bit.platformer.graphic.impl.LibGdxGraphicObject;
-import ru.mipt.bit.platformer.graphic.LevelRender;
-import ru.mipt.bit.platformer.objects.Obstacle;
-import ru.mipt.bit.platformer.objects.placement.TreesAndTanksPositionContainer;
-import ru.mipt.bit.platformer.graphic.impl.LibGdxGraphicObjectRender;
-import ru.mipt.bit.platformer.graphic.impl.LibGdxLevelRenderer;
-import ru.mipt.bit.platformer.objects.placement.GameObjectPositionsGenerator;
-import ru.mipt.bit.platformer.objects.placement.impl.LibGdxGameFieldAndTextureParams;
-import ru.mipt.bit.platformer.objects.placement.impl.GameObjectPositionsFileGenerator;
+import ru.mipt.bit.platformer.commands.impl.ShootCommand;
+import ru.mipt.bit.platformer.commands.mappers.CommandMapper;
+import ru.mipt.bit.platformer.commands.mappers.CommandMapperImpl;
+import ru.mipt.bit.platformer.placement.Direction;
 import ru.mipt.bit.platformer.keyboard.KeyboardChecker;
 import ru.mipt.bit.platformer.keyboard.impl.LibGdxKeyboardChecker;
-import ru.mipt.bit.platformer.objects.Tank;
-import ru.mipt.bit.platformer.movement.service.LibGdxMovementService;
-import ru.mipt.bit.platformer.movement.service.impl.LibGdxMovementServiceImpl;
-import ru.mipt.bit.platformer.commands.mappers.CommandMapper;
-import ru.mipt.bit.platformer.collision.CollisionDetectionManager;
-import ru.mipt.bit.platformer.commands.mappers.CommandMapperImpl;
-import ru.mipt.bit.platformer.collision.impl.CollisionDetectionManagerImpl;
-import ru.mipt.bit.platformer.processor.GameObjectsActivator;
-import ru.mipt.bit.platformer.processor.impl.GameObjectsActivatorImpl;
+import ru.mipt.bit.platformer.level.GraphicLevel;
+import ru.mipt.bit.platformer.level.LogicLevel;
+import ru.mipt.bit.platformer.level.impl.LibGdxGraphicLevel;
+import ru.mipt.bit.platformer.level.impl.LogicLevelImpl;
+import ru.mipt.bit.platformer.objects.support.LibGdxMovementService;
+import ru.mipt.bit.platformer.objects.support.impl.LibGdxMovementServiceImpl;
+import ru.mipt.bit.platformer.objects.logic.LogicObstacle;
+import ru.mipt.bit.platformer.objects.logic.LogicTank;
+import ru.mipt.bit.platformer.objects.support.impl.CoolDownTrackerImpl;
+import ru.mipt.bit.platformer.placement.Position;
+import ru.mipt.bit.platformer.position.generators.GameObjectPositionsGenerator;
+import ru.mipt.bit.platformer.position.generators.TreesAndTanksPositionContainer;
+import ru.mipt.bit.platformer.position.generators.impl.GameObjectPositionsFileGenerator;
+import ru.mipt.bit.platformer.position.generators.impl.LibGdxGameFieldAndTextureParams;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
-
 import static ru.mipt.bit.platformer.utils.GdxGameUtils.createSingleLayerMapRenderer;
 import static ru.mipt.bit.platformer.utils.GdxGameUtils.getSingleLayer;
 
 public class GameDesktopLauncher implements ApplicationListener {
 
-    private static final float MOVEMENT_SPEED = 0.4f;
+    private static final float TANK_SPEED = 0.6f;
+    private static final float PROJECTILE_SPEED = 0.2f;
+    private static final float TANK_HP = 100f;
+    private static final float PROJECTILE_DAMAGE = 50f;
+    private static final float COOL_DOWN = 2f;
+
     public static final int BOTS_START_INDEX = 1;
     public static final String GREEN_TREE_PNG = "images/greenTree.png";
     public static final String TANK_BLUE_PNG = "images/tank_blue.png";
+    public static final String PROJECTILE_PNG = "images/projectile.png";
 
     private final Interpolation interpolation = Interpolation.smooth;
 
-    private LevelRender levelRender;
-    private CommandsGenerator tankController;
-    private CommandsGenerator botController;
+    private GraphicLevel graphicLevel;
+    private Controller tankController;
+    private Controller botController;
     private CommandExecutor commandExecutor;
     private Texture blueTankTexture;
     private Texture greenTreeTexture;
-    private GameObjectsActivator gameObjectsActivator;
-    private Tank player;
+    private Texture projectileTexture;
+    private LogicLevel logicLevel;
 
     @Override
     public void create() {
@@ -105,25 +106,36 @@ public class GameDesktopLauncher implements ApplicationListener {
 
         TreesAndTanksPositionContainer wrapper = gameObjectPositionsGenerator.generateTreesAndTanksPositions();
 
-        List<Obstacle> trees = createTrees(tileLayer, greenTreeTexture, wrapper);
-        List<Tank> tanks = createTanks(tileLayer, blueTankTexture, wrapper);
+        logicLevel = new LogicLevelImpl();
 
-        gameObjectsActivator = createGameObjectActivator(tanks, trees);
-        levelRender = createLibGdxLevelRenderer(tanks, trees, batch, levelRenderer);
-        CollisionDetectionManager collisionManager = createCollisionDetectionManager(
-                tanks,
-                trees,
-                tileLayer.getWidth(),
-                tileLayer.getHeight()
-        );
+        LibGdxMovementService movementService = new LibGdxMovementServiceImpl(interpolation, tileLayer);
+        CollisionDetector collisionDetector = new CollisionDetectorImpl(tileLayer.getWidth(), tileLayer.getHeight());
 
-        initCommandExecutorAndControllers(collisionManager, tanks, trees);
+        graphicLevel = new LibGdxGraphicLevel(batch, levelRenderer, tileLayer,
+                movementService, greenTreeTexture, blueTankTexture, projectileTexture);
+
+        logicLevel.subscribe(graphicLevel);
+        logicLevel.subscribe(collisionDetector);
+
+        List<LogicObstacle> obstacles = getObstacles(wrapper);
+        List<LogicTank> bots = getBots(wrapper, logicLevel, collisionDetector);
+        LogicTank player = getPlayer(wrapper, logicLevel, collisionDetector);
+
+        logicLevel.addGameObjects(obstacles);
+        logicLevel.addGameObjects(bots);
+        logicLevel.addPlayer(player);
+
+        initCommandExecutorAndControllers(bots, obstacles, player);
 
     }
 
     @Override
     public void render() {
         clearScreen();
+
+        if (logicLevel.isGameOver()) {
+            return;
+        }
 
         // get time passed since the last render
         float deltaTime = Gdx.graphics.getDeltaTime();
@@ -132,9 +144,9 @@ public class GameDesktopLauncher implements ApplicationListener {
         botController.generate(deltaTime);
         commandExecutor.executeAll();
 
-        gameObjectsActivator.activateAll(deltaTime);
+        logicLevel.activateAll(deltaTime);
 
-        levelRender.renderAll();
+        graphicLevel.renderAll();
     }
 
     @Override
@@ -155,8 +167,9 @@ public class GameDesktopLauncher implements ApplicationListener {
     @Override
     public void dispose() {
         // dispose of all the native resources (classes which implement com.badlogic.gdx.utils.Disposable)
-        levelRender.dispose();
+        graphicLevel.dispose();
     }
+
 
     private void clearScreen() {
         // clear the screen
@@ -167,88 +180,74 @@ public class GameDesktopLauncher implements ApplicationListener {
     private void loadTextures() {
         greenTreeTexture = new Texture(GREEN_TREE_PNG);
         blueTankTexture = new Texture(TANK_BLUE_PNG);
+        projectileTexture = new Texture(PROJECTILE_PNG);
     }
 
-    private List<Obstacle> createTrees(TiledMapTileLayer tileLayer, Texture greenTreeTexture, TreesAndTanksPositionContainer wrapper) {
+    private List<LogicObstacle> getObstacles(TreesAndTanksPositionContainer wrapper) {
         return wrapper.getTrees().stream()
-                .map(collidingObject -> getObstacle(tileLayer, greenTreeTexture, collidingObject))
+                .map(LogicObstacle::new)
                 .collect(Collectors.toList());
     }
 
-    private Obstacle getObstacle(TiledMapTileLayer tileLayer, Texture greenTreeTexture, CollidingObject collidingObject) {
-        LibGdxGraphicObject graphicObject = new LibGdxGraphicObject(
-                tileLayer,
-                greenTreeTexture,
-                collidingObject
-        );
-        return new Obstacle(collidingObject, graphicObject);
+    private LogicTank getPlayer(TreesAndTanksPositionContainer wrapper, LogicLevel logicLevel, CollisionDetector collisionDetector) {
+        List<Position> tankPositions = wrapper.getTanks();
+        if (tankPositions.isEmpty()) {
+            throw new RuntimeException("At lease one tank must exist to present player");
+        }
+        return getTank(tankPositions.get(0), logicLevel, collisionDetector);
     }
 
+    private List<LogicTank> getBots(TreesAndTanksPositionContainer wrapper, LogicLevel logicLevel, CollisionDetector collisionDetector) {
+        List<Position> botPositions = wrapper.getTanks();
 
-    private List<Tank> createTanks(TiledMapTileLayer tileLayer, Texture blueTankTexture, TreesAndTanksPositionContainer wrapper) {
-        LibGdxMovementService movementService = new LibGdxMovementServiceImpl(interpolation);
 
-        return wrapper.getTanks().stream()
-                .map(collidingObject -> getTank(tileLayer, blueTankTexture, movementService, collidingObject))
+        if (botPositions.size() <= BOTS_START_INDEX) {
+            return Collections.emptyList();
+        }
+
+        return botPositions
+                .subList(BOTS_START_INDEX, wrapper.getTanks().size())
+                .stream()
+                .map(botPosition -> getTank(botPosition, logicLevel, collisionDetector))
                 .collect(Collectors.toList());
     }
 
-    private Tank getTank(TiledMapTileLayer tileLayer, Texture blueTankTexture,
-                         LibGdxMovementService movementService, CollidingObject collidingObject) {
+    private LogicTank getTank(Position position, LogicLevel logicLevel, CollisionDetector collisionDetector) {
 
-        LibGdxGraphicObject graphicObject = new LibGdxGraphicObject(
-                tileLayer,
-                blueTankTexture,
-                collidingObject
+        return new LogicTank(
+                TANK_SPEED, TANK_HP, COOL_DOWN,
+                PROJECTILE_DAMAGE, PROJECTILE_SPEED,
+                new CoolDownTrackerImpl(), position,
+                logicLevel, collisionDetector
         );
-        return new Tank(MOVEMENT_SPEED, movementService, graphicObject, collidingObject);
     }
 
-    private void initCommandExecutorAndControllers(CollisionDetectionManager collisionDetectionManager,
-                                                   List<Tank> tanks,
-                                                   List<Obstacle> trees) {
+    private void initCommandExecutorAndControllers(List<LogicTank> bots,
+                                                   List<LogicObstacle> trees,
+                                                   LogicTank player) {
 
         CommandSchedulerAndExecutor schedulerAndExecutor = new CommandSchedulerAndExecutor();
         commandExecutor = schedulerAndExecutor;
 
-        retrievePlayer(tanks);
-        List<Tank> bots = getBots(tanks);
-        CommandMapper commandMapper = createCommandMapper(player, collisionDetectionManager);
+        CommandMapper commandMapper = createCommandMapper(player);
         KeyboardChecker keyboardChecker = new LibGdxKeyboardChecker(Gdx.input);
 
-        tankController = new PlayerCommandsGenerator(commandMapper, keyboardChecker, schedulerAndExecutor);
-        botController = getBotAICommandsAdapter(
-                collisionDetectionManager,
-                schedulerAndExecutor,
-                trees, player, bots
-        );
+        tankController = new PlayerController(commandMapper, keyboardChecker, schedulerAndExecutor);
+//        botController = getBotAICommandsAdapter(
+//                schedulerAndExecutor,
+//                trees, player, bots
+//        );
+        botController = new BotController(bots, schedulerAndExecutor, new RandomCommandsGenerator());
     }
 
-    private void retrievePlayer(List<Tank> tanks) {
-        if (tanks.isEmpty()) {
-            throw new RuntimeException("At lease one tank must exist to present player");
-        }
-        player = tanks.get(0);
-    }
-
-    private List<Tank> getBots(List<Tank> tanks) {
-        if (tanks.size() <= BOTS_START_INDEX) {
-            return Collections.emptyList();
-        }
-        return tanks.subList(BOTS_START_INDEX, tanks.size());
-    }
-
-    private BotAICommandsAdapter getBotAICommandsAdapter(CollisionDetectionManager collisionDetectionManager,
-                                                         CommandScheduler commandScheduler,
-                                                         List<Obstacle> trees, Tank player, List<Tank> bots) {
+    private BotAICommandsAdapter getBotAICommandsAdapter(CommandScheduler commandScheduler,
+                                                         List<LogicObstacle> trees, LogicTank player, List<LogicTank> bots) {
         AI ai = new NotRecommendingAI();
         OrientationConverter orientationConverter = new OrientationConverterImpl();
         TankToPlayerConverter tankToPlayerConverter = new TankToPlayerConverterImpl(orientationConverter);
         TankToBotConverter tankToBotConverter = new TankToBotConverterImpl(orientationConverter);
         ObstacleConverter obstacleConverter = new ObstacleConverterImpl();
-        RecommendationToCommandConverter recommendationToCommandConverter = new RecommendationToCommandConverterImpl(
-                collisionDetectionManager
-        );
+        RecommendationToCommandConverter recommendationToCommandConverter = new RecommendationToCommandConverterImpl();
 
         GameStateCreator gameStateCreator = new GameStateCreatorImpl(
                 tankToPlayerConverter,
@@ -262,48 +261,19 @@ public class GameDesktopLauncher implements ApplicationListener {
                 gameStateCreator,
                 recommendationToCommandConverter,
                 bots,
-                trees.stream().map(Obstacle::getCollidingObject).collect(Collectors.toList()),
+                trees,
                 player
         );
     }
 
-    private GameObjectsActivator createGameObjectActivator(List<Tank> tanks, List<Obstacle> obstacles) {
-        List<Activated> activatedList = Stream.of(
-                obstacles,
-                tanks
-        ).flatMap(Collection::stream).collect(Collectors.toList());
-        return new GameObjectsActivatorImpl(activatedList);
-    }
 
-    private LibGdxLevelRenderer createLibGdxLevelRenderer(List<Tank> tanks, List<Obstacle> obstacles, Batch batch, MapRenderer levelRenderer) {
-        List<GraphicObjectRenderer> gameObjectRenderers = Stream.of(
-                obstacles.stream()
-                        .map(Obstacle::getLibGdxGraphicObject)
-                        .map(graphicObject -> new LibGdxGraphicObjectRender(graphicObject, batch))
-                        .collect(Collectors.toList()),
-                tanks.stream()
-                        .map(Tank::getLibGdxGraphicObject)
-                        .map(graphicObject -> new LibGdxGraphicObjectRender(graphicObject, batch))
-                        .collect(Collectors.toList())
-        ).flatMap(Collection::stream).collect(Collectors.toList());
-
-        return new LibGdxLevelRenderer(batch, levelRenderer, gameObjectRenderers);
-    }
-
-    private CollisionDetectionManager createCollisionDetectionManager(List<Tank> tanks, List<Obstacle> obstacles, int maxX, int maxY) {
-        List<Colliding> collidingList = Stream.of(
-                tanks.stream().map(Tank::getCollidingObject).collect(Collectors.toList()),
-                obstacles.stream().map(Obstacle::getCollidingObject).collect(Collectors.toList())
-        ).flatMap(Collection::stream).collect(Collectors.toList());
-        return new CollisionDetectionManagerImpl(collidingList, maxX, maxY);
-    }
-
-    private CommandMapper createCommandMapper(Tank player, CollisionDetectionManager collisionDetectionManager) {
+    private CommandMapper createCommandMapper(LogicTank player) {
         CommandMapper commandMapper = new CommandMapperImpl();
-        Command moveUpCommand = new MovementCommand(collisionDetectionManager, player, Direction.UP);
-        Command moveLeftCommand = new MovementCommand(collisionDetectionManager, player, Direction.LEFT);
-        Command moveRightCommand = new MovementCommand(collisionDetectionManager, player, Direction.RIGHT);
-        Command moveDownCommand = new MovementCommand(collisionDetectionManager, player, Direction.DOWN);
+        Command moveUpCommand = new MovementCommand(player, Direction.UP);
+        Command moveLeftCommand = new MovementCommand(player, Direction.LEFT);
+        Command moveRightCommand = new MovementCommand(player, Direction.RIGHT);
+        Command moveDownCommand = new MovementCommand(player, Direction.DOWN);
+        Command shootCommand = new ShootCommand(player);
 
         commandMapper.addCommandMapping(Set.of(Input.Keys.W), moveUpCommand);
         commandMapper.addCommandMapping(Set.of(Input.Keys.UP), moveUpCommand);
@@ -313,6 +283,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         commandMapper.addCommandMapping(Set.of(Input.Keys.LEFT), moveLeftCommand);
         commandMapper.addCommandMapping(Set.of(Input.Keys.D), moveRightCommand);
         commandMapper.addCommandMapping(Set.of(Input.Keys.RIGHT), moveRightCommand);
+        commandMapper.addCommandMapping(Set.of(Input.Keys.SPACE), shootCommand);
 
         return commandMapper;
     }

@@ -1,11 +1,11 @@
 package ru.mipt.bit.platformer.ai.creator;
 
 import org.awesome.ai.state.GameState;
-import ru.mipt.bit.platformer.objects.CollidingObject;
-import ru.mipt.bit.platformer.objects.Tank;
+import ru.mipt.bit.platformer.objects.logic.LogicObstacle;
+import ru.mipt.bit.platformer.objects.logic.LogicTank;
 
 import java.util.List;
 
 public interface GameStateCreator {
-    GameState createGameState(Tank player, List<Tank> bots, List<CollidingObject> obstacles);
+    GameState createGameState(LogicTank player, List<LogicTank> bots, List<LogicObstacle> obstacles);
 }
