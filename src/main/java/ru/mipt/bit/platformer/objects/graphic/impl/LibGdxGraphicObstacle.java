@@ -7,7 +7,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.Rectangle;
 
 import ru.mipt.bit.platformer.objects.graphic.LibGdxBatchDrawer;
-import ru.mipt.bit.platformer.objects.graphic.Disposable;
 import ru.mipt.bit.platformer.objects.graphic.GraphicObjectRenderer;
 import ru.mipt.bit.platformer.objects.GameObject;
 import ru.mipt.bit.platformer.objects.logic.LogicObstacle;
@@ -16,7 +15,7 @@ import static ru.mipt.bit.platformer.utils.GdxGameUtils.convertPointToGridPoint;
 import static ru.mipt.bit.platformer.utils.GdxGameUtils.createBoundingRectangle;
 import static ru.mipt.bit.platformer.utils.GdxGameUtils.moveRectangleAtTileCenter;
 
-public class LibGdxGraphicObstacle implements Disposable, GraphicObjectRenderer {
+public class LibGdxGraphicObstacle implements GraphicObjectRenderer {
 
     private final LogicObstacle obstacle;
     private final LibGdxBatchDrawer libGdxBatchDrawer;

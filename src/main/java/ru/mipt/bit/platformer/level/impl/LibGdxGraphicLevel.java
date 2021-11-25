@@ -5,12 +5,15 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import lombok.RequiredArgsConstructor;
+import ru.mipt.bit.platformer.decorator.HealthBarViewDecorator;
 import ru.mipt.bit.platformer.objects.AgileObject;
 import ru.mipt.bit.platformer.objects.graphic.GraphicObjectRenderer;
 import ru.mipt.bit.platformer.objects.graphic.Disposable;
+import ru.mipt.bit.platformer.objects.graphic.impl.LibGdxGraphicHealthBar;
 import ru.mipt.bit.platformer.objects.graphic.impl.LibGdxGraphicObstacle;
 import ru.mipt.bit.platformer.objects.graphic.impl.LibGdxAgileGraphicObject;
 import ru.mipt.bit.platformer.level.GraphicLevel;
+import ru.mipt.bit.platformer.objects.logic.LogicHealthBar;
 import ru.mipt.bit.platformer.objects.logic.LogicProjectile;
 import ru.mipt.bit.platformer.objects.logic.LogicTank;
 import ru.mipt.bit.platformer.objects.support.LibGdxMovementService;
@@ -36,6 +39,8 @@ public class LibGdxGraphicLevel implements GraphicLevel {
     private final Texture projectileTexture;
 
     private final List<GraphicObjectRenderer> renderers = new ArrayList<>();
+
+    private boolean printHealthBars = false;
 
 
     @Override
@@ -75,7 +80,14 @@ public class LibGdxGraphicLevel implements GraphicLevel {
 
     private GraphicObjectRenderer convertToRenderer(GameObject gameObject) {
         if (gameObject instanceof LogicTank) {
-            return new LibGdxAgileGraphicObject((AgileObject) gameObject, movementService, tileLayer, blueTankTexture);
+            LibGdxAgileGraphicObject libGdxAgileGraphicObject = new LibGdxAgileGraphicObject(
+                    (AgileObject) gameObject,
+                    movementService,
+                    tileLayer,
+                    blueTankTexture
+            );
+            LibGdxGraphicHealthBar libGdxGraphicHealthBar = new LibGdxGraphicHealthBar(new LogicHealthBar(), blueTankTexture);
+            return new HealthBarViewDecorator(libGdxAgileGraphicObject, libGdxGraphicHealthBar, this);
         } else if (gameObject instanceof LogicProjectile) {
             return new LibGdxAgileGraphicObject((AgileObject) gameObject, movementService, tileLayer, projectileTexture);
         } else if (gameObject instanceof LogicObstacle) {
@@ -85,5 +97,13 @@ public class LibGdxGraphicLevel implements GraphicLevel {
                 String.format("Unknown type of %s: %s",
                         GameObject.class, gameObject.getClass().getSuperclass())
         );
+    }
+
+    public boolean printHealthBars() {
+        return printHealthBars;
+    }
+
+    public void setPrintHealthBars(boolean printHealthBars) {
+        this.printHealthBars = printHealthBars;
     }
 }

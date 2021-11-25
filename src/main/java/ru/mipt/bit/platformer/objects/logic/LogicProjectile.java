@@ -51,7 +51,7 @@ public class LogicProjectile implements GameObject, AgileObject {
     @Override
     public void activate(float deltaTime) {
         checkCollisions();
-        movementProgress = clamp(movementProgress + deltaTime / speed, PROGRESS_MIN, PROGRESS_MAX);
+        movementProgress = clamp(movementProgress + deltaTime * speed, PROGRESS_MIN, PROGRESS_MAX);
 
         Point logicObjectCoordinates = position.getCoordinates();
         if (isMovementFinished() && !logicObjectCoordinates.equals(destinationCoordinates)) {

@@ -31,6 +31,7 @@ import ru.mipt.bit.platformer.commands.Command;
 import ru.mipt.bit.platformer.commands.CommandExecutor;
 import ru.mipt.bit.platformer.commands.CommandScheduler;
 import ru.mipt.bit.platformer.commands.generators.impl.RandomCommandsGenerator;
+import ru.mipt.bit.platformer.commands.impl.ShowHealthBarsCommand;
 import ru.mipt.bit.platformer.controllers.Controller;
 import ru.mipt.bit.platformer.controllers.impl.BotAICommandsAdapter;
 import ru.mipt.bit.platformer.controllers.impl.BotController;
@@ -69,10 +70,10 @@ import static ru.mipt.bit.platformer.utils.GdxGameUtils.getSingleLayer;
 
 public class GameDesktopLauncher implements ApplicationListener {
 
-    private static final float TANK_SPEED = 0.6f;
-    private static final float PROJECTILE_SPEED = 0.2f;
+    private static final float TANK_SPEED = 1.5f;
+    private static final float PROJECTILE_SPEED = 5f;
     private static final float TANK_HP = 100f;
-    private static final float PROJECTILE_DAMAGE = 50f;
+    private static final float PROJECTILE_DAMAGE = 20f;
     private static final float COOL_DOWN = 2f;
 
     public static final int BOTS_START_INDEX = 1;
@@ -111,10 +112,11 @@ public class GameDesktopLauncher implements ApplicationListener {
         LibGdxMovementService movementService = new LibGdxMovementServiceImpl(interpolation, tileLayer);
         CollisionDetector collisionDetector = new CollisionDetectorImpl(tileLayer.getWidth(), tileLayer.getHeight());
 
-        graphicLevel = new LibGdxGraphicLevel(batch, levelRenderer, tileLayer,
+        LibGdxGraphicLevel libGdxGraphicLevel = new LibGdxGraphicLevel(batch, levelRenderer, tileLayer,
                 movementService, greenTreeTexture, blueTankTexture, projectileTexture);
+        this.graphicLevel = libGdxGraphicLevel;
 
-        logicLevel.subscribe(graphicLevel);
+        logicLevel.subscribe(this.graphicLevel);
         logicLevel.subscribe(collisionDetector);
 
         List<LogicObstacle> obstacles = getObstacles(wrapper);
@@ -125,7 +127,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         logicLevel.addGameObjects(bots);
         logicLevel.addPlayer(player);
 
-        initCommandExecutorAndControllers(bots, obstacles, player);
+        initCommandExecutorAndControllers(bots, obstacles, player, libGdxGraphicLevel);
 
     }
 
@@ -224,12 +226,13 @@ public class GameDesktopLauncher implements ApplicationListener {
 
     private void initCommandExecutorAndControllers(List<LogicTank> bots,
                                                    List<LogicObstacle> trees,
-                                                   LogicTank player) {
+                                                   LogicTank player,
+                                                   LibGdxGraphicLevel graphicLevel) {
 
         CommandSchedulerAndExecutor schedulerAndExecutor = new CommandSchedulerAndExecutor();
         commandExecutor = schedulerAndExecutor;
 
-        CommandMapper commandMapper = createCommandMapper(player);
+        CommandMapper commandMapper = createCommandMapper(player, graphicLevel);
         KeyboardChecker keyboardChecker = new LibGdxKeyboardChecker(Gdx.input);
 
         tankController = new PlayerController(commandMapper, keyboardChecker, schedulerAndExecutor);
@@ -267,13 +270,14 @@ public class GameDesktopLauncher implements ApplicationListener {
     }
 
 
-    private CommandMapper createCommandMapper(LogicTank player) {
+    private CommandMapper createCommandMapper(LogicTank player, LibGdxGraphicLevel libGdxGraphicLevel) {
         CommandMapper commandMapper = new CommandMapperImpl();
         Command moveUpCommand = new MovementCommand(player, Direction.UP);
         Command moveLeftCommand = new MovementCommand(player, Direction.LEFT);
         Command moveRightCommand = new MovementCommand(player, Direction.RIGHT);
         Command moveDownCommand = new MovementCommand(player, Direction.DOWN);
         Command shootCommand = new ShootCommand(player);
+        Command showHealthBarsCommand = new ShowHealthBarsCommand(libGdxGraphicLevel);
 
         commandMapper.addCommandMapping(Set.of(Input.Keys.W), moveUpCommand);
         commandMapper.addCommandMapping(Set.of(Input.Keys.UP), moveUpCommand);
@@ -284,6 +288,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         commandMapper.addCommandMapping(Set.of(Input.Keys.D), moveRightCommand);
         commandMapper.addCommandMapping(Set.of(Input.Keys.RIGHT), moveRightCommand);
         commandMapper.addCommandMapping(Set.of(Input.Keys.SPACE), shootCommand);
+        commandMapper.addCommandMapping(Set.of(Input.Keys.L), showHealthBarsCommand);
 
         return commandMapper;
     }

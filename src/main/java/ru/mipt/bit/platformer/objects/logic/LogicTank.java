@@ -3,6 +3,8 @@ package ru.mipt.bit.platformer.objects.logic;
 
 import ru.mipt.bit.platformer.collision.CollisionDetector;
 import ru.mipt.bit.platformer.objects.AgileObject;
+import ru.mipt.bit.platformer.objects.states.State;
+import ru.mipt.bit.platformer.objects.states.impl.SlightlyDamagedState;
 import ru.mipt.bit.platformer.placement.Direction;
 import ru.mipt.bit.platformer.placement.Point;
 import ru.mipt.bit.platformer.level.LogicLevel;
@@ -27,6 +29,8 @@ public class LogicTank implements Movable, GameObject, AgileObject {
     private final float projectileDamage;
     private final float projectileSpeed;
     private final float coolDown;
+    private final float maxHp;
+
     private float hp;
 
     private final Position position;
@@ -35,6 +39,8 @@ public class LogicTank implements Movable, GameObject, AgileObject {
     private final CoolDownTracker coolDownTracker;
     private final Point destinationCoordinates;
 
+    private State state;
+
 
     public LogicTank(float speed, float hp, float coolDown,
                      float projectileDamage, float projectileSpeed,
@@ -42,6 +48,7 @@ public class LogicTank implements Movable, GameObject, AgileObject {
                      LogicLevel logicLevel, CollisionDetector collisionDetector) {
 
         this.speed = speed;
+        this.maxHp = hp;
         this.hp = hp;
         this.coolDown = coolDown;
         this.projectileDamage = projectileDamage;
@@ -52,28 +59,16 @@ public class LogicTank implements Movable, GameObject, AgileObject {
         this.destinationCoordinates = new Point(position.getCoordinates());
         this.logicLevel = logicLevel;
         this.collisionDetector = collisionDetector;
+        this.state = new SlightlyDamagedState(this);
     }
 
-    public LogicProjectile shoot() {
-        if (!coolDownTracker.isReady()) {
-            return null;
-        }
-        coolDownTracker.resetTracker(coolDown);
-        Direction projectileDirection = Direction.getDirectionByOrientation(position.getOrientation());
-        Point projectileStart = Point.sum(destinationCoordinates, projectileDirection.getShift());
-        return new LogicProjectile(
-                projectileSpeed,
-                projectileDamage,
-                projectileDirection,
-                new Position(position.getOrientation(), projectileStart),
-                logicLevel,
-                collisionDetector
-        );
+    public void shoot() {
+        state.shoot();
     }
 
     @Override
     public void activate(float deltaTime) {
-        movementProgress = clamp(movementProgress + deltaTime / speed, PROGRESS_MIN, PROGRESS_MAX);
+        state.recalculateProgress(deltaTime, speed);
         coolDownTracker.updateTracker(deltaTime);
         Point logicObjectCoordinates = position.getCoordinates();
         if (isMovementFinished() && !logicObjectCoordinates.equals(destinationCoordinates)) {
@@ -108,10 +103,7 @@ public class LogicTank implements Movable, GameObject, AgileObject {
 
     @Override
     public void registerHarmfulCollision(float damage) {
-        hp -= damage;
-        if (hp <= 0) {
-            logicLevel.deleteGameObjects(List.of(this));
-        }
+        state.registerHarmfulCollision(damage);
     }
 
     @Override
@@ -127,6 +119,50 @@ public class LogicTank implements Movable, GameObject, AgileObject {
     @Override
     public float getMovementProgress() {
         return movementProgress;
+    }
+
+    public void recalculateProgress(float deltaTime, float speed) {
+        movementProgress = clamp(movementProgress + deltaTime * speed, PROGRESS_MIN, PROGRESS_MAX);
+    }
+
+    public float getProjectileDamage() {
+        return projectileDamage;
+    }
+
+    public float getProjectileSpeed() {
+        return projectileSpeed;
+    }
+
+    public float getCoolDown() {
+        return coolDown;
+    }
+
+    public float getHp() {
+        return hp;
+    }
+
+    public float getMaxHp() {
+        return maxHp;
+    }
+
+    public CoolDownTracker getCoolDownTracker() {
+        return coolDownTracker;
+    }
+
+    public CollisionDetector getCollisionDetector() {
+        return collisionDetector;
+    }
+
+    public LogicLevel getLogicLevel() {
+        return logicLevel;
+    }
+
+    public void setHp(float hp) {
+        this.hp = hp;
+    }
+
+    public void setState(State state) {
+        this.state = state;
     }
 
     private boolean checkCollisionAfterShift(Direction direction) {
