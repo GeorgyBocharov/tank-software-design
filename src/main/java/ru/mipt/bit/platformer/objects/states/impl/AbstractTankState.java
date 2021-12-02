@@ -14,7 +14,9 @@ import ru.mipt.bit.platformer.placement.Position;
 
 import java.util.List;
 
-
+/**
+ * Entity
+ */
 @RequiredArgsConstructor
 public abstract class AbstractTankState implements TankState {
 

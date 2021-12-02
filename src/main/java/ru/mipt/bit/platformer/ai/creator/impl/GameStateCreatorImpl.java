@@ -12,6 +12,9 @@ import ru.mipt.bit.platformer.objects.logic.LogicTank;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Adapter
+ */
 @RequiredArgsConstructor
 public class GameStateCreatorImpl implements GameStateCreator {
 

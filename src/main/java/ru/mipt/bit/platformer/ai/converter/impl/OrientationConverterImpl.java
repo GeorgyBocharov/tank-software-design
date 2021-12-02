@@ -3,6 +3,9 @@ package ru.mipt.bit.platformer.ai.converter.impl;
 import org.awesome.ai.state.movable.Orientation;
 import ru.mipt.bit.platformer.ai.converter.OrientationConverter;
 
+/**
+ * Adapter
+ */
 public class OrientationConverterImpl implements OrientationConverter {
 
     @Override

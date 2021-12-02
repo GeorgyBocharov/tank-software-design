@@ -3,6 +3,9 @@ package ru.mipt.bit.platformer.placement;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Entity
+ */
 public enum Direction {
     UP(new Point(0, 1), Orientation.UP),
     DOWN( new Point(0, -1), Orientation.DOWN),

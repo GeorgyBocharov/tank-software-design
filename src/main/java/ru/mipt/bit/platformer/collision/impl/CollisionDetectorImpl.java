@@ -9,6 +9,9 @@ import ru.mipt.bit.platformer.objects.GameObject;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Use-case
+ */
 @RequiredArgsConstructor
 public class CollisionDetectorImpl implements CollisionDetector {
 

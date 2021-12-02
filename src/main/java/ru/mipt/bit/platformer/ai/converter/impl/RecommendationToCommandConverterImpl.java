@@ -10,6 +10,9 @@ import ru.mipt.bit.platformer.commands.impl.ShootCommand;
 import ru.mipt.bit.platformer.placement.Direction;
 import ru.mipt.bit.platformer.objects.logic.LogicTank;
 
+/**
+ * Adapter
+ */
 @RequiredArgsConstructor
 public class RecommendationToCommandConverterImpl implements RecommendationToCommandConverter {
 

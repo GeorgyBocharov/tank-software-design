@@ -2,6 +2,9 @@ package ru.mipt.bit.platformer.placement;
 
 import lombok.Getter;
 
+/**
+ * Entity
+ */
 @Getter
 public enum Orientation {
     UP(90f),

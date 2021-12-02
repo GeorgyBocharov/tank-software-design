@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import ru.mipt.bit.platformer.commands.Command;
 import ru.mipt.bit.platformer.objects.logic.LogicTank;
 
+/**
+ * Entity
+ */
 @RequiredArgsConstructor
 public class ShootCommand implements Command {
 

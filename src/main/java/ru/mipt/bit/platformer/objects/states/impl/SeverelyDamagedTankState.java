@@ -2,6 +2,9 @@ package ru.mipt.bit.platformer.objects.states.impl;
 
 import ru.mipt.bit.platformer.objects.logic.LogicTank;
 
+/**
+ * Entity
+ */
 public class SeverelyDamagedTankState extends AbstractTankState {
 
     public SeverelyDamagedTankState(LogicTank tank) {

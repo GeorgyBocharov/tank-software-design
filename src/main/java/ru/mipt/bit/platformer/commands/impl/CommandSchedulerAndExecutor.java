@@ -9,7 +9,6 @@ import java.util.List;
 
 public class CommandSchedulerAndExecutor implements CommandExecutor, CommandScheduler {
 
-
     private final List<Command> commandList = new ArrayList<>();
 
     @Override

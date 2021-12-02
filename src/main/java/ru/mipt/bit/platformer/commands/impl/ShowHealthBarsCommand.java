@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import ru.mipt.bit.platformer.commands.Command;
 import ru.mipt.bit.platformer.level.impl.LibGdxGraphicLevel;
 
+/**
+ * Entity
+ */
 @RequiredArgsConstructor
 public class ShowHealthBarsCommand implements Command {
     private final LibGdxGraphicLevel level;

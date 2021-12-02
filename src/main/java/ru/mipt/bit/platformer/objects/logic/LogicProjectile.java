@@ -14,7 +14,10 @@ import java.util.List;
 import static com.badlogic.gdx.math.MathUtils.clamp;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 
-
+/**
+ * Entity class
+ * Describes projectile
+ */
 public class LogicProjectile implements GameObject, AgileObject {
 
     private static final float PROGRESS_MAX = 1F;
