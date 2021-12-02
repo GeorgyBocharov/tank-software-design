@@ -2,18 +2,19 @@ package ru.mipt.bit.platformer.level.impl;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import lombok.RequiredArgsConstructor;
 import ru.mipt.bit.platformer.decorator.HealthBarViewDecorator;
 import ru.mipt.bit.platformer.objects.AgileObject;
+import ru.mipt.bit.platformer.objects.Vulnerable;
 import ru.mipt.bit.platformer.objects.graphic.GraphicObjectRenderer;
 import ru.mipt.bit.platformer.objects.graphic.Disposable;
 import ru.mipt.bit.platformer.objects.graphic.impl.LibGdxGraphicHealthBar;
 import ru.mipt.bit.platformer.objects.graphic.impl.LibGdxGraphicObstacle;
 import ru.mipt.bit.platformer.objects.graphic.impl.LibGdxAgileGraphicObject;
 import ru.mipt.bit.platformer.level.GraphicLevel;
-import ru.mipt.bit.platformer.objects.logic.LogicHealthBar;
 import ru.mipt.bit.platformer.objects.logic.LogicProjectile;
 import ru.mipt.bit.platformer.objects.logic.LogicTank;
 import ru.mipt.bit.platformer.objects.support.LibGdxMovementService;
@@ -32,6 +33,7 @@ public class LibGdxGraphicLevel implements GraphicLevel {
     private final Batch batch;
     private final MapRenderer levelRenderer;
     private final TiledMapTileLayer tileLayer;
+    private final ShapeRenderer shapeRenderer;
     private final LibGdxMovementService movementService;
 
     private final Texture greenTreeTexture;
@@ -47,8 +49,12 @@ public class LibGdxGraphicLevel implements GraphicLevel {
     public void renderAll() {
         levelRenderer.render();
         batch.begin();
-        renderers.forEach(renderer -> renderer.render(batch));
+        renderers.forEach(GraphicObjectRenderer::render);
         batch.end();
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        renderers.forEach(GraphicObjectRenderer::renderShape);
+        shapeRenderer.end();
     }
 
     @Override
@@ -84,14 +90,19 @@ public class LibGdxGraphicLevel implements GraphicLevel {
                     (AgileObject) gameObject,
                     movementService,
                     tileLayer,
+                    batch,
                     blueTankTexture
             );
-            LibGdxGraphicHealthBar libGdxGraphicHealthBar = new LibGdxGraphicHealthBar(new LogicHealthBar(), blueTankTexture);
+            LibGdxGraphicHealthBar libGdxGraphicHealthBar = new LibGdxGraphicHealthBar(
+                    shapeRenderer, (Vulnerable) gameObject,
+                    libGdxAgileGraphicObject.getRectangle(),  blueTankTexture
+            );
+
             return new HealthBarViewDecorator(libGdxAgileGraphicObject, libGdxGraphicHealthBar, this);
         } else if (gameObject instanceof LogicProjectile) {
-            return new LibGdxAgileGraphicObject((AgileObject) gameObject, movementService, tileLayer, projectileTexture);
+            return new LibGdxAgileGraphicObject((AgileObject) gameObject, movementService, tileLayer, batch, projectileTexture);
         } else if (gameObject instanceof LogicObstacle) {
-            return new LibGdxGraphicObstacle((LogicObstacle) gameObject, tileLayer, greenTreeTexture);
+            return new LibGdxGraphicObstacle((LogicObstacle) gameObject, tileLayer,  batch, greenTreeTexture);
         }
         throw new RuntimeException(
                 String.format("Unknown type of %s: %s",

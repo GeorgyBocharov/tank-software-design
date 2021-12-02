@@ -1,6 +1,5 @@
 package ru.mipt.bit.platformer.decorator;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import lombok.RequiredArgsConstructor;
 import ru.mipt.bit.platformer.level.impl.LibGdxGraphicLevel;
 import ru.mipt.bit.platformer.objects.GameObject;
@@ -14,10 +13,16 @@ public class HealthBarViewDecorator implements GraphicObjectRenderer {
     private final LibGdxGraphicLevel level;
 
     @Override
-    public void render(Batch batch) {
-        wrapper.render(batch);
+    public void render() {
+        wrapper.render();
+        graphicHealthBar.render();
+    }
+
+    @Override
+    public void renderShape() {
+        wrapper.renderShape();
         if (level.printHealthBars()) {
-            graphicHealthBar.render(batch);
+            graphicHealthBar.renderShape();
         }
     }
 

@@ -1,8 +1,9 @@
 package ru.mipt.bit.platformer.objects.states;
 
 
-public interface State {
+public interface TankState {
     void shoot();
     void recalculateProgress(float deltaTime, float speed);
-    void registerHarmfulCollision(float damage);
+    void hurtTank(float damage);
+    void healTank(float extraHP);
 }

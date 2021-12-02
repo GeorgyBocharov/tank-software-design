@@ -23,12 +23,14 @@ public class LibGdxAgileGraphicObject implements GraphicObjectRenderer {
     private final LibGdxMovementService libGdxMovementService;
     private final LibGdxBatchDrawer libGdxBatchDrawer;
     private final Rectangle rectangle;
+    private final Batch batch;
 
     public LibGdxAgileGraphicObject(AgileObject agileObject, LibGdxMovementService libGdxMovementService,
-                                    TiledMapTileLayer tileLayer, Texture texture) {
+                                    TiledMapTileLayer tileLayer, Batch batch, Texture texture) {
 
         this.agileObject = agileObject;
         this.libGdxMovementService = libGdxMovementService;
+        this.batch = batch;
 
         TextureRegion textureRegion = new TextureRegion(texture);
         this.rectangle = createBoundingRectangle(textureRegion);
@@ -43,7 +45,7 @@ public class LibGdxAgileGraphicObject implements GraphicObjectRenderer {
     }
 
     @Override
-    public void render(Batch batch) {
+    public void render() {
         moveTankRectangle();
         float rotation = agileObject.getPosition().getOrientation().getValue();
         libGdxBatchDrawer.drawRectangle(batch, rotation);
@@ -52,6 +54,10 @@ public class LibGdxAgileGraphicObject implements GraphicObjectRenderer {
     @Override
     public boolean hasGameObject(GameObject gameObject) {
         return agileObject == gameObject;
+    }
+
+    public Rectangle getRectangle() {
+        return rectangle;
     }
 
     private void moveTankRectangle() {

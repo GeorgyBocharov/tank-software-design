@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -41,6 +42,7 @@ import ru.mipt.bit.platformer.commands.impl.MovementCommand;
 import ru.mipt.bit.platformer.commands.impl.ShootCommand;
 import ru.mipt.bit.platformer.commands.mappers.CommandMapper;
 import ru.mipt.bit.platformer.commands.mappers.CommandMapperImpl;
+import ru.mipt.bit.platformer.objects.support.impl.VulnerableObject;
 import ru.mipt.bit.platformer.placement.Direction;
 import ru.mipt.bit.platformer.keyboard.KeyboardChecker;
 import ru.mipt.bit.platformer.keyboard.impl.LibGdxKeyboardChecker;
@@ -112,7 +114,7 @@ public class GameDesktopLauncher implements ApplicationListener {
         LibGdxMovementService movementService = new LibGdxMovementServiceImpl(interpolation, tileLayer);
         CollisionDetector collisionDetector = new CollisionDetectorImpl(tileLayer.getWidth(), tileLayer.getHeight());
 
-        LibGdxGraphicLevel libGdxGraphicLevel = new LibGdxGraphicLevel(batch, levelRenderer, tileLayer,
+        LibGdxGraphicLevel libGdxGraphicLevel = new LibGdxGraphicLevel(batch, levelRenderer, tileLayer, new ShapeRenderer(),
                 movementService, greenTreeTexture, blueTankTexture, projectileTexture);
         this.graphicLevel = libGdxGraphicLevel;
 
@@ -217,10 +219,10 @@ public class GameDesktopLauncher implements ApplicationListener {
     private LogicTank getTank(Position position, LogicLevel logicLevel, CollisionDetector collisionDetector) {
 
         return new LogicTank(
-                TANK_SPEED, TANK_HP, COOL_DOWN,
+                TANK_SPEED, COOL_DOWN,
                 PROJECTILE_DAMAGE, PROJECTILE_SPEED,
-                new CoolDownTrackerImpl(), position,
-                logicLevel, collisionDetector
+                new CoolDownTrackerImpl(), new VulnerableObject(TANK_HP),
+                position, logicLevel, collisionDetector
         );
     }
 

@@ -19,9 +19,11 @@ public class LibGdxGraphicObstacle implements GraphicObjectRenderer {
 
     private final LogicObstacle obstacle;
     private final LibGdxBatchDrawer libGdxBatchDrawer;
+    private final Batch batch;
 
-    public LibGdxGraphicObstacle(LogicObstacle obstacle, TiledMapTileLayer tileLayer, Texture texture) {
+    public LibGdxGraphicObstacle(LogicObstacle obstacle, TiledMapTileLayer tileLayer, Batch batch, Texture texture) {
         this.obstacle = obstacle;
+        this.batch = batch;
         TextureRegion textureRegion = new TextureRegion(texture);
         Rectangle rectangle = createBoundingRectangle(textureRegion);
         this.libGdxBatchDrawer = new LibGdxBatchDrawerImpl(texture, textureRegion, rectangle);
@@ -35,7 +37,7 @@ public class LibGdxGraphicObstacle implements GraphicObjectRenderer {
     }
 
     @Override
-    public void render(Batch batch) {
+    public void render() {
         float rotation = obstacle.getPosition().getOrientation().getValue();
         libGdxBatchDrawer.drawRectangle(batch, rotation);
     }

@@ -3,8 +3,9 @@ package ru.mipt.bit.platformer.objects.logic;
 
 import ru.mipt.bit.platformer.collision.CollisionDetector;
 import ru.mipt.bit.platformer.objects.AgileObject;
-import ru.mipt.bit.platformer.objects.states.State;
-import ru.mipt.bit.platformer.objects.states.impl.SlightlyDamagedState;
+import ru.mipt.bit.platformer.objects.Vulnerable;
+import ru.mipt.bit.platformer.objects.states.TankState;
+import ru.mipt.bit.platformer.objects.states.impl.SlightlyDamagedTankState;
 import ru.mipt.bit.platformer.placement.Direction;
 import ru.mipt.bit.platformer.placement.Point;
 import ru.mipt.bit.platformer.level.LogicLevel;
@@ -18,7 +19,7 @@ import java.util.List;
 
 import static com.badlogic.gdx.math.MathUtils.clamp;
 
-public class LogicTank implements Movable, GameObject, AgileObject {
+public class LogicTank implements Movable, GameObject, AgileObject, Vulnerable {
 
     private static final float PROGRESS_MAX = 1F;
     private static final float PROGRESS_MIN = 0F;
@@ -29,37 +30,34 @@ public class LogicTank implements Movable, GameObject, AgileObject {
     private final float projectileDamage;
     private final float projectileSpeed;
     private final float coolDown;
-    private final float maxHp;
-
-    private float hp;
 
     private final Position position;
     private final CollisionDetector collisionDetector;
     private final LogicLevel logicLevel;
     private final CoolDownTracker coolDownTracker;
+    private final Vulnerable vulnerableObject;
     private final Point destinationCoordinates;
 
-    private State state;
+    private TankState state;
 
 
-    public LogicTank(float speed, float hp, float coolDown,
+    public LogicTank(float speed, float coolDown,
                      float projectileDamage, float projectileSpeed,
-                     CoolDownTracker coolDownTracker, Position position,
+                     CoolDownTracker coolDownTracker, Vulnerable vulnerableObject, Position position,
                      LogicLevel logicLevel, CollisionDetector collisionDetector) {
 
         this.speed = speed;
-        this.maxHp = hp;
-        this.hp = hp;
         this.coolDown = coolDown;
         this.projectileDamage = projectileDamage;
         this.projectileSpeed = projectileSpeed;
 
+        this.vulnerableObject = vulnerableObject;
         this.coolDownTracker = coolDownTracker;
         this.position = position;
         this.destinationCoordinates = new Point(position.getCoordinates());
         this.logicLevel = logicLevel;
         this.collisionDetector = collisionDetector;
-        this.state = new SlightlyDamagedState(this);
+        this.state = new SlightlyDamagedTankState(this);
     }
 
     public void shoot() {
@@ -103,7 +101,7 @@ public class LogicTank implements Movable, GameObject, AgileObject {
 
     @Override
     public void registerHarmfulCollision(float damage) {
-        state.registerHarmfulCollision(damage);
+        hurt(damage);
     }
 
     @Override
@@ -121,8 +119,37 @@ public class LogicTank implements Movable, GameObject, AgileObject {
         return movementProgress;
     }
 
+    @Override
+    public float getHP() {
+        return vulnerableObject.getHP();
+    }
+
+    @Override
+    public boolean isAlive() {
+        return vulnerableObject.isAlive();
+    }
+
+    @Override
+    public float getMaxHP() {
+        return vulnerableObject.getMaxHP();
+    }
+
+    @Override
+    public void hurt(float damage) {
+        state.hurtTank(damage);
+    }
+
+    @Override
+    public void heal(float extraHP) {
+        state.healTank(extraHP);
+    }
+
     public void recalculateProgress(float deltaTime, float speed) {
         movementProgress = clamp(movementProgress + deltaTime * speed, PROGRESS_MIN, PROGRESS_MAX);
+    }
+
+    public Vulnerable getVulnerableObject() {
+        return vulnerableObject;
     }
 
     public float getProjectileDamage() {
@@ -137,14 +164,6 @@ public class LogicTank implements Movable, GameObject, AgileObject {
         return coolDown;
     }
 
-    public float getHp() {
-        return hp;
-    }
-
-    public float getMaxHp() {
-        return maxHp;
-    }
-
     public CoolDownTracker getCoolDownTracker() {
         return coolDownTracker;
     }
@@ -157,11 +176,7 @@ public class LogicTank implements Movable, GameObject, AgileObject {
         return logicLevel;
     }
 
-    public void setHp(float hp) {
-        this.hp = hp;
-    }
-
-    public void setState(State state) {
+    public void setState(TankState state) {
         this.state = state;
     }
 

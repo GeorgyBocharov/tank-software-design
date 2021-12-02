@@ -3,9 +3,10 @@ package ru.mipt.bit.platformer.objects.states.impl;
 import lombok.RequiredArgsConstructor;
 import ru.mipt.bit.platformer.collision.CollisionDetector;
 import ru.mipt.bit.platformer.level.LogicLevel;
+import ru.mipt.bit.platformer.objects.Vulnerable;
 import ru.mipt.bit.platformer.objects.logic.LogicProjectile;
 import ru.mipt.bit.platformer.objects.logic.LogicTank;
-import ru.mipt.bit.platformer.objects.states.State;
+import ru.mipt.bit.platformer.objects.states.TankState;
 import ru.mipt.bit.platformer.objects.support.CoolDownTracker;
 import ru.mipt.bit.platformer.placement.Direction;
 import ru.mipt.bit.platformer.placement.Point;
@@ -15,7 +16,7 @@ import java.util.List;
 
 
 @RequiredArgsConstructor
-public abstract class AbstractState implements State {
+public abstract class AbstractTankState implements TankState {
 
     protected final LogicTank tank;
 
@@ -52,18 +53,31 @@ public abstract class AbstractState implements State {
     }
 
     @Override
-    public void registerHarmfulCollision(float damage) {
-        float hp = tank.getHp();
-        float maxHp = tank.getMaxHp();
+    public void hurtTank(float damage) {
+        float maxHP = tank.getMaxHP();
         LogicLevel logicLevel = tank.getLogicLevel();
-        hp -= damage;
-        tank.setHp(hp);
-        if (hp <= 0) {
+        Vulnerable vulnerable = tank.getVulnerableObject();
+        vulnerable.hurt(damage);
+        float hp = tank.getHP();
+        if (!tank.isAlive()) {
             logicLevel.deleteGameObjects(List.of(tank));
-        } else if (hp < maxHp / 3) {
-            tank.setState(new SeverelyDamagedState(tank));
-        } else if (hp < maxHp / 2) {
-            tank.setState(new ModeratelyDamagedState(tank));
+        } else if (hp < maxHP / 3) {
+            tank.setState(new SeverelyDamagedTankState(tank));
+        } else if (hp < maxHP / 2) {
+            tank.setState(new ModeratelyDamagedTankState(tank));
+        }
+    }
+
+    @Override
+    public void healTank(float extraHP) {
+        float maxHP = tank.getMaxHP();
+        Vulnerable vulnerable = tank.getVulnerableObject();
+        vulnerable.heal(extraHP);
+        float hp = tank.getHP();
+        if (hp > maxHP / 2) {
+            tank.setState(new SlightlyDamagedTankState(tank));
+        } else if (hp > maxHP / 3) {
+            tank.setState(new ModeratelyDamagedTankState(tank));
         }
     }
 }

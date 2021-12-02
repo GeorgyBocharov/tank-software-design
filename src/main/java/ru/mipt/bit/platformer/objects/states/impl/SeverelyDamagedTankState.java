@@ -2,14 +2,19 @@ package ru.mipt.bit.platformer.objects.states.impl;
 
 import ru.mipt.bit.platformer.objects.logic.LogicTank;
 
-public class ModeratelyDamagedState extends AbstractState {
+public class SeverelyDamagedTankState extends AbstractTankState {
 
-    public ModeratelyDamagedState(LogicTank tank) {
+    public SeverelyDamagedTankState(LogicTank tank) {
         super(tank);
     }
 
     @Override
+    public void shoot() {
+
+    }
+
+    @Override
     public void recalculateProgress(float deltaTime, float speed) {
-        tank.recalculateProgress(deltaTime, speed / 2);
+        tank.recalculateProgress(deltaTime, speed / 3);
     }
 }
