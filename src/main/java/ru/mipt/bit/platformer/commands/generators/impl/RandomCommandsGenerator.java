@@ -10,7 +10,7 @@ import ru.mipt.bit.platformer.objects.logic.LogicTank;
 import java.util.Random;
 
 /**
- * Adapter interface implementation
+ * Application level
  */
 public class RandomCommandsGenerator implements CommandGenerator {
 

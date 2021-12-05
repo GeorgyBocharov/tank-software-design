@@ -3,7 +3,7 @@ package ru.mipt.bit.platformer.objects.states.impl;
 import ru.mipt.bit.platformer.objects.logic.LogicTank;
 
 /**
- * Entity
+ * Application class
  */
 public class ModeratelyDamagedTankState extends AbstractTankState {
 

@@ -3,7 +3,7 @@ package ru.mipt.bit.platformer.placement;
 import lombok.Getter;
 
 /**
- * Entity
+ * Domain class
  */
 @Getter
 public enum Orientation {

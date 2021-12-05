@@ -9,7 +9,7 @@ import ru.mipt.bit.platformer.objects.logic.LogicTank;
 import java.util.List;
 
 /**
- * Adapter interface implementation
+ * Application level
  */
 @RequiredArgsConstructor
 public class BotController implements Controller {

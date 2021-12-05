@@ -47,7 +47,9 @@ public class LibGdxGraphicLevel implements GraphicLevel {
 
     private boolean printHealthBars = false;
 
-
+/**
+ * Adapter level
+ */
     @Override
     public void renderAll() {
         levelRenderer.render();

@@ -2,6 +2,9 @@ package ru.mipt.bit.platformer.objects.support.impl;
 
 import ru.mipt.bit.platformer.objects.support.CoolDownTracker;
 
+/**
+ * Application class
+ */
 public class CoolDownTrackerImpl implements CoolDownTracker {
 
     private float coolDownTracker = 0;

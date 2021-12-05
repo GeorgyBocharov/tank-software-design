@@ -11,7 +11,7 @@ import ru.mipt.bit.platformer.placement.Direction;
 import ru.mipt.bit.platformer.objects.logic.LogicTank;
 
 /**
- * Adapter
+ * Adapter level
  */
 @RequiredArgsConstructor
 public class RecommendationToCommandConverterImpl implements RecommendationToCommandConverter {

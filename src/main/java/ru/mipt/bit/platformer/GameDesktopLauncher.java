@@ -71,7 +71,7 @@ import static ru.mipt.bit.platformer.utils.GdxGameUtils.createSingleLayerMapRend
 import static ru.mipt.bit.platformer.utils.GdxGameUtils.getSingleLayer;
 
 /**
- * Application
+ * Application level
  */
 public class GameDesktopLauncher implements ApplicationListener {
 

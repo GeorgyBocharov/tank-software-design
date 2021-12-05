@@ -16,7 +16,7 @@ import ru.mipt.bit.platformer.objects.logic.LogicTank;
 import java.util.List;
 
 /**
- * Adapter interface implementation
+ * Adapter level
  */
 @RequiredArgsConstructor
 public class BotAICommandsAdapter implements Controller {

@@ -14,7 +14,7 @@ import java.util.Random;
 import java.util.Set;
 
 /**
- * Adapter interface implementation
+ * Application level
  */
 public class GameObjectPositionsRandomGenerator implements GameObjectPositionsGenerator {
 

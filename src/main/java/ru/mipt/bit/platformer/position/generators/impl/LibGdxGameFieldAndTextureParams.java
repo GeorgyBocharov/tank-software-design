@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 
 import ru.mipt.bit.platformer.position.generators.GameFieldAndTextureParams;
 
+/**
+ * Adapter level
+ */
 @RequiredArgsConstructor
 public class LibGdxGameFieldAndTextureParams implements GameFieldAndTextureParams {
 

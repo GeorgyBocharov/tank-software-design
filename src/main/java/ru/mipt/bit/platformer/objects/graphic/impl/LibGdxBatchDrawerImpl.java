@@ -7,6 +7,9 @@ import com.badlogic.gdx.math.Rectangle;
 import lombok.RequiredArgsConstructor;
 import ru.mipt.bit.platformer.objects.graphic.LibGdxBatchDrawer;
 
+/**
+ * Adapter level
+ */
 @RequiredArgsConstructor
 public class LibGdxBatchDrawerImpl implements LibGdxBatchDrawer {
 

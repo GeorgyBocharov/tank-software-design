@@ -7,7 +7,7 @@ import ru.mipt.bit.platformer.ai.converter.TankToBotConverter;
 import ru.mipt.bit.platformer.objects.logic.LogicTank;
 
 /**
- * Adapter
+ * Adapter level
  */
 @RequiredArgsConstructor
 public class TankToBotConverterImpl implements TankToBotConverter {

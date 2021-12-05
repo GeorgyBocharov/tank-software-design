@@ -10,7 +10,7 @@ import ru.mipt.bit.platformer.placement.Position;
 import java.util.List;
 
 /**
- * Entity class
+ * Domain class
  * Describes obstacle, i.e. tree
  */
 @RequiredArgsConstructor

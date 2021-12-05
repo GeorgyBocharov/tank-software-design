@@ -6,7 +6,7 @@ import ru.mipt.bit.platformer.placement.Point;
 import ru.mipt.bit.platformer.objects.logic.LogicObstacle;
 
 /**
- * Adapter
+ * Adapter level
  */
 public class ObstacleConverterImpl implements ObstacleConverter {
 

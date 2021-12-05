@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Entity
+ * Domain class
  */
 public enum Direction {
     UP(new Point(0, 1), Orientation.UP),

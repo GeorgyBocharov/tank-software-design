@@ -1,7 +1,7 @@
 package ru.mipt.bit.platformer.position.generators;
 
 /**
- * Adapter interface
+ * port between application and adapter levels
  */
 public interface GameObjectPositionsGenerator {
     TreesAndTanksPositionContainer generateTreesAndTanksPositions();

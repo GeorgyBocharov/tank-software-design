@@ -6,6 +6,9 @@ import ru.mipt.bit.platformer.keyboard.KeyboardChecker;
 
 import java.util.Set;
 
+/**
+ * Adapter level
+ */
 @RequiredArgsConstructor
 public class LibGdxKeyboardChecker implements KeyboardChecker {
 

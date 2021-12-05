@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 /**
- * Entity
+ * Domain class
  */
 @Getter
 @ToString

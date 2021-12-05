@@ -2,6 +2,9 @@ package ru.mipt.bit.platformer.objects.support.impl;
 
 import ru.mipt.bit.platformer.objects.Vulnerable;
 
+/**
+ * Domain class
+ */
 public class VulnerableObject implements Vulnerable {
 
     private final float maxHp;

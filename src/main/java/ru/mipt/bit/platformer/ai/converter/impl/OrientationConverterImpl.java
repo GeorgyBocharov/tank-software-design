@@ -4,7 +4,7 @@ import org.awesome.ai.state.movable.Orientation;
 import ru.mipt.bit.platformer.ai.converter.OrientationConverter;
 
 /**
- * Adapter
+ * Adapter level
  */
 public class OrientationConverterImpl implements OrientationConverter {
 

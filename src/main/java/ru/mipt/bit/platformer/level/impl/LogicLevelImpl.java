@@ -8,8 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Use-case class
- * Describes logic
+ * Application level
  */
 public class LogicLevelImpl implements LogicLevel {
     private final List<GameObject> activeGameObjects = new ArrayList<>();

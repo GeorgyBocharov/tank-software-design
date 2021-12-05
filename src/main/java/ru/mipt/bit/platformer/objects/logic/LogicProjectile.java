@@ -15,7 +15,7 @@ import static com.badlogic.gdx.math.MathUtils.clamp;
 import static com.badlogic.gdx.math.MathUtils.isEqual;
 
 /**
- * Entity class
+ * Domain class
  * Describes projectile
  */
 public class LogicProjectile implements GameObject, AgileObject {

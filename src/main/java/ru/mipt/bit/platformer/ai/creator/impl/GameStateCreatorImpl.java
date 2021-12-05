@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Adapter
+ * Adapter level
  */
 @RequiredArgsConstructor
 public class GameStateCreatorImpl implements GameStateCreator {

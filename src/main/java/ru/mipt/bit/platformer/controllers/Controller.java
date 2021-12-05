@@ -1,7 +1,7 @@
 package ru.mipt.bit.platformer.controllers;
 
 /**
- * Adapter interface
+ * Port between application and adapter levels
  */
 public interface Controller {
     void generate(float deltaTime);

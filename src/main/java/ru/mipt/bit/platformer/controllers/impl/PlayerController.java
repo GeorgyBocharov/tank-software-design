@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Adapter interface implementation
+ * Application level
  */
 @RequiredArgsConstructor
 public class PlayerController implements Controller {

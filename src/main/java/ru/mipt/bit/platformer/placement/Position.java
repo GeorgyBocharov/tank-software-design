@@ -7,7 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * Entity
+ * Domain class
  */
 @ToString
 @Getter

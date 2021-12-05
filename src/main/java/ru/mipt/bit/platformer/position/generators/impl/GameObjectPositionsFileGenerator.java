@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Adapter interface implementation
+ * Adapter level
  */
 public class GameObjectPositionsFileGenerator implements GameObjectPositionsGenerator {
 

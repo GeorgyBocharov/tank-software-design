@@ -20,7 +20,7 @@ import java.util.List;
 import static com.badlogic.gdx.math.MathUtils.clamp;
 
 /**
- * Entity class
+ * Domain class
  * Describes tank
  */
 public class LogicTank implements Movable, GameObject, AgileObject, Vulnerable {
