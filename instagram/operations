@@ -1,0 +1,12 @@
+post photo:
+insert posts (photo data, account id, metadata)
+get answer, that data is written
+post event (to kafka topic or rabbit mq, kafka key - post, value - metadata, accountId),
+
+check feed:
+listen events from topic.
+Get post id and photo id,
+query read server for photos.
+
+put like:
+send query to update data
