@@ -5,6 +5,9 @@ import ru.mipt.bit.platformer.commands.Command;
 import ru.mipt.bit.platformer.placement.Direction;
 import ru.mipt.bit.platformer.objects.Movable;
 
+/**
+ * Domain level
+ */
 @RequiredArgsConstructor
 public class MovementCommand implements Command {
 

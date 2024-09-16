@@ -6,6 +6,9 @@ import ru.mipt.bit.platformer.objects.GameObject;
 import ru.mipt.bit.platformer.objects.graphic.GraphicObjectRenderer;
 import ru.mipt.bit.platformer.objects.graphic.impl.LibGdxGraphicHealthBar;
 
+/**
+ * Application level
+ */
 @RequiredArgsConstructor
 public class HealthBarViewDecorator implements GraphicObjectRenderer {
     private final GraphicObjectRenderer wrapper;

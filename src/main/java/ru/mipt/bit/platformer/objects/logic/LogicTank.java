@@ -19,6 +19,10 @@ import java.util.List;
 
 import static com.badlogic.gdx.math.MathUtils.clamp;
 
+/**
+ * Domain class
+ * Describes tank
+ */
 public class LogicTank implements Movable, GameObject, AgileObject, Vulnerable {
 
     private static final float PROGRESS_MAX = 1F;

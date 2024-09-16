@@ -10,6 +10,9 @@ import ru.mipt.bit.platformer.commands.mappers.CommandMapper;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Application level
+ */
 @RequiredArgsConstructor
 public class PlayerController implements Controller {
 

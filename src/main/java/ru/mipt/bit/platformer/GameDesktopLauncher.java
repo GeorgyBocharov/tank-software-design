@@ -70,6 +70,9 @@ import static com.badlogic.gdx.graphics.GL20.GL_COLOR_BUFFER_BIT;
 import static ru.mipt.bit.platformer.utils.GdxGameUtils.createSingleLayerMapRenderer;
 import static ru.mipt.bit.platformer.utils.GdxGameUtils.getSingleLayer;
 
+/**
+ * Application level
+ */
 public class GameDesktopLauncher implements ApplicationListener {
 
     private static final float TANK_SPEED = 1.5f;

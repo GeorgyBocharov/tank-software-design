@@ -10,6 +10,9 @@ import ru.mipt.bit.platformer.objects.support.LibGdxMovementService;
 
 import static ru.mipt.bit.platformer.utils.GdxGameUtils.moveRectangleAtTileCenter;
 
+/**
+ * Adapter class
+ */
 @AllArgsConstructor
 public class LibGdxMovementServiceImpl implements LibGdxMovementService {
     private final Interpolation interpolation;

@@ -15,6 +15,9 @@ import static ru.mipt.bit.platformer.utils.GdxGameUtils.convertPointToGridPoint;
 import static ru.mipt.bit.platformer.utils.GdxGameUtils.createBoundingRectangle;
 import static ru.mipt.bit.platformer.utils.GdxGameUtils.moveRectangleAtTileCenter;
 
+/**
+ * Adapter level
+ */
 public class LibGdxGraphicObstacle implements GraphicObjectRenderer {
 
     private final LogicObstacle obstacle;

@@ -26,7 +26,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-
+/**
+ * Use-case class
+ * Describes drawing of all objects
+ */
 @RequiredArgsConstructor
 public class LibGdxGraphicLevel implements GraphicLevel {
 
@@ -44,7 +47,9 @@ public class LibGdxGraphicLevel implements GraphicLevel {
 
     private boolean printHealthBars = false;
 
-
+/**
+ * Adapter level
+ */
     @Override
     public void renderAll() {
         levelRenderer.render();

@@ -4,6 +4,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+/**
+ * Domain class
+ */
 @Getter
 @ToString
 @EqualsAndHashCode

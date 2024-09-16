@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+/**
+ * Application level
+ */
 public class GameObjectPositionsRandomGenerator implements GameObjectPositionsGenerator {
 
     private final GameFieldAndTextureParams gameFieldAndTextureParams;

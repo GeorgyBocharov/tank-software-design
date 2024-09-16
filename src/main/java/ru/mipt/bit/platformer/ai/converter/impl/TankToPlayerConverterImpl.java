@@ -6,6 +6,9 @@ import ru.mipt.bit.platformer.ai.converter.OrientationConverter;
 import ru.mipt.bit.platformer.ai.converter.TankToPlayerConverter;
 import ru.mipt.bit.platformer.objects.logic.LogicTank;
 
+/**
+ * Adapter level
+ */
 @RequiredArgsConstructor
 public class TankToPlayerConverterImpl implements TankToPlayerConverter {
 

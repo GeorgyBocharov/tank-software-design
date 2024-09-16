@@ -12,6 +12,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Adapter level
+ */
 public class GameObjectPositionsFileGenerator implements GameObjectPositionsGenerator {
 
     private static final char TREE_MARKER = 'T';

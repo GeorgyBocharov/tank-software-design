@@ -7,8 +7,10 @@ import ru.mipt.bit.platformer.commands.CommandScheduler;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Application level
+ */
 public class CommandSchedulerAndExecutor implements CommandExecutor, CommandScheduler {
-
 
     private final List<Command> commandList = new ArrayList<>();
 

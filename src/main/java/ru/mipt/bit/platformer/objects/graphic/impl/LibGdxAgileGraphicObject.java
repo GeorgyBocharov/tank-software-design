@@ -17,6 +17,9 @@ import static ru.mipt.bit.platformer.utils.GdxGameUtils.convertPointToGridPoint;
 import static ru.mipt.bit.platformer.utils.GdxGameUtils.createBoundingRectangle;
 import static ru.mipt.bit.platformer.utils.GdxGameUtils.moveRectangleAtTileCenter;
 
+/**
+ * Adapter level
+ */
 public class LibGdxAgileGraphicObject implements GraphicObjectRenderer {
     private final AgileObject agileObject;
 

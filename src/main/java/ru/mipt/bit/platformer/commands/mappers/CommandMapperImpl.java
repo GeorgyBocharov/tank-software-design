@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Application level
+ */
 public class CommandMapperImpl implements CommandMapper {
 
     //several keys in sets are treated as combination

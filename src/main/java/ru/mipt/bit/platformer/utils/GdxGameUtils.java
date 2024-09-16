@@ -15,6 +15,9 @@ import ru.mipt.bit.platformer.placement.Point;
 
 import java.util.NoSuchElementException;
 
+/**
+ * support
+ */
 public final class GdxGameUtils {
 
     private GdxGameUtils() {
@@ -49,10 +52,6 @@ public final class GdxGameUtils {
         Vector2 tileCenter = calculateTileCenter(tileLayer, tileCoordinates);
         rectangle.setCenter(tileCenter);
         return new Vector2(rectangle.x, rectangle.y);
-    }
-
-    public static GridPoint2 sumPoints(GridPoint2 first, GridPoint2 second) {
-        return new GridPoint2(first).add(second);
     }
 
     public static Rectangle createBoundingRectangle(TextureRegion region) {

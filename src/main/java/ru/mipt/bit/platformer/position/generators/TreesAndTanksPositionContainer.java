@@ -9,6 +9,9 @@ import ru.mipt.bit.platformer.placement.Position;
 
 import java.util.List;
 
+/**
+ * Application level
+ */
 @AllArgsConstructor
 @Getter
 @ToString

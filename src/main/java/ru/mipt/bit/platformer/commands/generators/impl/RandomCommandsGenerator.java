@@ -9,6 +9,9 @@ import ru.mipt.bit.platformer.objects.logic.LogicTank;
 
 import java.util.Random;
 
+/**
+ * Application level
+ */
 public class RandomCommandsGenerator implements CommandGenerator {
 
     private static final int AVAILABLE_COMMANDS_NUMBER = 5;

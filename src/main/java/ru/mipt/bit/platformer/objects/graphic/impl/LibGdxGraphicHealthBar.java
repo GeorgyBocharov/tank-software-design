@@ -8,6 +8,9 @@ import ru.mipt.bit.platformer.objects.GameObject;
 import ru.mipt.bit.platformer.objects.Vulnerable;
 import ru.mipt.bit.platformer.objects.graphic.GraphicObjectRenderer;
 
+/**
+ * Adapter level
+ */
 public class LibGdxGraphicHealthBar implements GraphicObjectRenderer {
 
     private static final float MAX_WIDTH = 50;

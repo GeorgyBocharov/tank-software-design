@@ -5,6 +5,9 @@ import ru.mipt.bit.platformer.publisher.Publisher;
 
 import java.util.List;
 
+/**
+ * Application level
+ */
 public interface LogicLevel extends Publisher {
     void activateAll(float deltaTime);
     void addPlayer(GameObject player);

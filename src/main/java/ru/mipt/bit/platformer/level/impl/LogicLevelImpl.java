@@ -7,6 +7,9 @@ import ru.mipt.bit.platformer.publisher.Subscriber;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Application level
+ */
 public class LogicLevelImpl implements LogicLevel {
     private final List<GameObject> activeGameObjects = new ArrayList<>();
     private final List<GameObject> inactiveGameObjects = new ArrayList<>();
